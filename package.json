@@ -1,0 +1,53 @@
+{
+  "name": "smoothr",
+  "version": "0.1.0",
+  "description": "Smoothr: Smooth Router - A custom React router that leverages the Web Animations API and CSS animations",
+  "main": "dist/smoothr.cjs.js",
+  "jsnext:main": "dist/smoothr.esm.js",
+  "module": "dist/smoothr.esm.js",
+  "author": "Nate Adams",
+  "license": "MIT",
+  "scripts": {
+    "contributors:add": "all-contributors add",
+    "build": "yarn install; kcd-scripts build --bundle --p-react"
+  },
+  "files": [
+    "dist",
+    "preact"
+  ],
+  "peerDependencies": {
+    "prop-types": ">=15",
+    "react": ">=16.3.0"
+  },
+  "devDependencies": {
+    "all-contributors-cli": "^4.11.1",
+    "kcd-scripts": "^0.37.0",
+    "npm-run-all": "^4.1.2",
+    "preact": "^8.2.5",
+    "prop-types": "^15.6.0",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "serve": "^10.0.2",
+    "path-to-regexp": "^3.0.0"
+  },
+  "dependencies": {},
+  "eslintConfig": {
+    "extends": "./node_modules/kcd-scripts/eslint.js"
+  },
+  "eslintIgnore": [
+    "node_modules",
+    "cypress",
+    "stories",
+    "storybook-static",
+    "dist",
+    "preact"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/n8jadams/smoothr.git"
+  },
+  "bugs": {
+    "url": "https://github.com/n8jadams/smoothr/issues"
+  },
+  "homepage": "https://github.com/n8jadams/smoothr#readme"
+}

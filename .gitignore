@@ -1,0 +1,15 @@
+node_modules
+coverage
+dist
+.opt-in
+.opt-out
+.DS_Store
+.next
+.eslintcache
+storybook-static
+preact
+
+# Make contributing easier
+package-lock.json
+yarn.lock
+yarn-error.log

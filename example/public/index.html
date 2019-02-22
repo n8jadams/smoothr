@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Smoothr Demo</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="%PUBLIC_URL%/assets/favicon/favicon.ico">
+    <meta name="theme-color" content="#26547C" />
+    <meta name="description" content="Smoothr: Smooth Router - A custom React router that leverages the Web Animations API and CSS animations" />
+    <link rel="icon" sizes="16x16 32x32 64x64" href="%PUBLIC_URL%/assets/favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="%PUBLIC_URL%/assets/favicon/favicon-192.png">
+    <link rel="icon" type="image/png" sizes="160x160" href="%PUBLIC_URL%/assets/favicon/favicon-160.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="%PUBLIC_URL%/assets/favicon/favicon-96.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="%PUBLIC_URL%/assets/favicon/favicon-64.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/assets/favicon/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/assets/favicon/favicon-16.png">
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/assets/favicon/favicon-57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="%PUBLIC_URL%/assets/favicon/favicon-114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="%PUBLIC_URL%/assets/favicon/favicon-72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="%PUBLIC_URL%/assets/favicon/favicon-144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="%PUBLIC_URL%/assets/favicon/favicon-60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="%PUBLIC_URL%/assets/favicon/favicon-120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="%PUBLIC_URL%/assets/favicon/favicon-76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="%PUBLIC_URL%/assets/favicon/favicon-152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/assets/favicon/favicon-180.png">
+    <meta name="msapplication-TileColor" content="#FFFFFF">
+    <meta name="msapplication-TileImage" content="%PUBLIC_URL%/assets/favicon/favicon-144.png">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    <!-- Needed assets -->
+    <link rel="stylesheet" href="%PUBLIC_URL%/assets/style.css" />
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <!-- Polyfills -->
+    <script crossorigin="anonymous" src="https://polyfill.io/v3/polyfill.min.js?features=default%2CObject.assign%2CPromise"></script>
+  </head>
+  <body>
+    <!-- Github pages redirect script -->
+    <script type="text/javascript">
+      (function(){
+        // Handle redirect
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect != location.href) {
+          history.replaceState(null, null, redirect);
+        }
+        // Conditionally add the web animation API polyfill
+        if(!document.body.animate) {
+          var polyfillScript = document.createElement('script');
+          polyfillScript.setAttribute('src', 'https://rawgit.com/web-animations/web-animations-js/master/web-animations.min.js');
+          document.head.appendChild(polyfillScript);
+        }
+      })();
+    </script>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
