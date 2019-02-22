@@ -4,7 +4,7 @@ A custom React router that leverages the Web Animations API and CSS animations. 
 ![Smoothr Logo](assets/big-logo.png)
 
 ## Background
-In my experience from using animations with React Router and other Single Page App routing solutions, the work to add animation transitions on changing routes was a lot more complicated than just regular routing. I also was inspired by the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) and decided to create my own flavor of a Router, that treats animations as a first class citizen.
+In my experience from using animations with React Router and other Single Page App routing solutions, the work to add animation transitions on changing routes was a lot more complicated than just regular routing. I also was inspired by the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) and decided to create my own flavor of a Router, that treats animations as first class citizens.
 
 Anyway, thanks for checking this library out. If you end up using Smoothr in production, let me know and I'll add a link here in the README. 
 
