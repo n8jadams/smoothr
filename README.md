@@ -61,12 +61,12 @@ const App = () => (
           message="Welcome to the homepage!"
         />
         <Route
-          path="/"
+          path="/anotherpage"
           component={Page}
           // Use CSS classes for animating
           animationIn={'fadeOutCSSClassName'}
           animationOut={'fadeOutCSSClassName'}
-          message="Welcome to the homepage!"
+          message="Welcome to the other page!"
         />
         <Route
           // The `notFound` prop designates a route, path, and component for 404 page
