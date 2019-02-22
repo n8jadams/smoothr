@@ -64,7 +64,7 @@ const App = () => (
           path="/anotherpage"
           component={Page}
           // Use CSS classes for animating
-          animationIn={'fadeOutCSSClassName'}
+          animationIn={'fadeInCSSClassName'}
           animationOut={'fadeOutCSSClassName'}
           message="Welcome to the other page!"
         />
