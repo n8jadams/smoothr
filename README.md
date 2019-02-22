@@ -90,7 +90,7 @@ For a more complete example, check out [the demo](http://n8jadams.github.com/smo
 ### `<Smoothr>`
 
 #### Usage: 
-The `<Smoothr />` component just needs to be used up the tree of any `<Link />`s or `<SmoothRoutes />`. I just recommend having it at the top level of your Single Page App.
+The `<Smoothr>` component just needs to be used up the tree of any `<Link>`s or `<SmoothRoutes>`. I just recommend having it at the top level of your Single Page App.
 
 #### Available props: (* indicates a required prop)
 * `configAnimationSetDuration`* - _(function)_ - This method allows changing of local state in order to conditionally set the upcoming animation. It is a `Promise`, to ensure any asynchonous state changes to be completed before the animating begins. Example:
@@ -103,7 +103,7 @@ configAnimationSetDuration = ({
   // Routes are the original matching routes, as set in the <Route /> components
   outgoingRoute,
   incomingRoute,
-  // If the user nagivated with the "back" button in the browser
+  // If the user nagivated with the "back" button in the browser (boolean)
   backNavigation
 }) => {
   // Have this method return the duration of the animation as an int in milliseconds
@@ -111,7 +111,7 @@ configAnimationSetDuration = ({
 };
 ```
 
-* `onAnimationStart` - _(function)_ - This function will run right before the animation begins. Use it to imperitively kick off transition animations. Example:
+* `onAnimationStart` - _(function)_ - This function will run right before the animation begins. Use it to imperitively kick off transition animations. If you want to kick off an animation based on incoming or outgoing routes, use `configAnimationSet` to set some state, and then use that state in this method. Example:
 
 ```javascript
 onAnimationStart = ({ initialPageload }) => {
@@ -130,15 +130,15 @@ This defaults to an empty string, which signifies the document root.
 ### `<SmoothRoutes>`
 
 #### Usage:
-Imagine `<SmoothRoutes>` as a regular DOM element that changes when the url changes. It's children MUST be `<Route>` components. You can use as many of these on the page as you want. Often you'll want to wrap each `<SmoothRoutes>` component in a wrapper DOM element with some CSS rules to set it's size.
+Imagine `<SmoothRoutes>` as a regular DOM element that changes when the url changes. Its children MUST be `<Route>` components. You can use as many of these on the page as you want. Often you'll want to wrap each `<SmoothRoutes>` component in a wrapper DOM element with some CSS rules to set its size.
 
 #### Available props:
 Each of these props are identical to their `<Route>` counterparts. They will be applied to all routes if set at the `<SmoothRoutes>` level, but if a `<Route>` has an animation prop, the logic will favor the props set on the `<Route>` at transition.
-* `animationIn` - _(array of objects/string indicating classname)_
-* `animationOut` - _(array of objects/string indicating classname)_
+* `animationIn` - _(array of objects/string indicating class name)_
+* `animationOut` - _(array of objects/string indicating class name)_
 * `animationOpts` - _(object with keys for `duration` and `easing`)_
-* `reverseAnimationIn` - _(array of objects/string indicating classname)_
-* `reverseAnimationOut` - _(array of objects/string indicating classname)_
+* `reverseAnimationIn` - _(array of objects/string indicating class name)_
+* `reverseAnimationOut` - _(array of objects/string indicating class name)_
 * `reverseAnimationOpts` - _(object with keys for `duration` and `easing`)_
 
 ### `<Route>`
@@ -156,13 +156,13 @@ Most of the actual animation configuration takes place on the `<Route>` level. A
 // If the url is "/users/12345", the following will be rendered:
 <UsersPage id="12345">
 ```
-* `animationIn` - _(array of objects/string indicating classname)_ - The value of this prop corresponds to the first argument of the [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate) method, or a css class name, which will be applied to the `<Route>` DOM element during the duration of the animation. If this isn't passed, then no animation will occur, but be aware that the incoming `<Route>` won't show up until the duration ends, as set in the `configAnimationSetDuration` prop of the top level `<Smoothr>` component.
-* `animationOut` - _(array of objects/string indicating classname)_ - Similiar to `animationIn`, but is applied to the outgoing `<Route>`
-* `animationOpts` - _(object with keys for `duration` and `easing`)_ - This corresponds to the second argument of the [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate) method. These options are applied to both the incoming and outgoing `<Route>s` during transition. If using a CSS class transition, then this is optional.
-* `reverseAnimationIn` - _(array of objects/string indicating classname)_ - Same as the `animationIn` but happens when the user nagivates back with the "back" button in their browser.
-* `reverseAnimationOut` - _(array of objects/string indicating classname)_ - Reverse equivalent of the `animationOut` prop.
+* `animationIn` - _(array of objects/string indicating class name)_ - The value of this prop corresponds to the first argument of the [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate) method, or a css class name, which will be applied to the `<Route>` DOM element during the duration of the animation. If this isn't passed, then no animation will occur, but be aware that the incoming `<Route>` won't show up until the duration ends, as set in the `configAnimationSetDuration` prop of the top level `<Smoothr>` component.
+* `animationOut` - _(array of objects/string indicating class name)_ - Similiar to `animationIn`, but is applied to the outgoing `<Route>`
+* `animationOpts` - _(object with keys for `duration` and `easing`)_ - This corresponds to the second argument of the [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate) method. These options are applied to both the incoming and outgoing `<Route>`s during transition. If using a CSS class transition, then this is optional.
+* `reverseAnimationIn` - _(array of objects/string indicating class name)_ - Same as the `animationIn` but happens when the user nagivates back with the "back" button in their browser.
+* `reverseAnimationOut` - _(array of objects/string indicating class name)_ - Reverse equivalent of the `animationOut` prop.
 * `reverseAnimationOpts` - _(object with keys for `duration` and `easing`)_ - Reverse equivalent of the `animationOpts` prop.
-* Any other props that are passed will be passed down to the rendered `component`.
+* Any other props that are set will be passed down to the rendered `component`.
 
 ### `<Link>`
 
@@ -171,14 +171,16 @@ Links are wrappers around anchor (`<a>`) tags, except it adds the `disabled` pro
 
 #### Available props: (* indicates a required prop)
 * `href`* - _(string)_ - Same as anchor tag
-* `onClick` - _(function)_ - Self-explanatory
-* `fuzzyDisable` - _(bool)_ - If is prop is set to `true`, it will disable the link if the route matches the current variabled route. By default, only exact url matches will be disabled. 
+* `onClick` - _(function)_ - This is self-explanatory
+* `fuzzyDisable` - _(bool)_ - If is prop is set to `true`, it will disable the link if the route matches the current variabled route. By default, only exact url matches will be disabled.
+* Any other props that are set will be passed down to the rendered anchor tag.
 
 ## To do list:
 - [x] Release initial build to NPM
-- [ ] Test callback functions as `<Route>` "component" prop
+- [ ] Test callback functions as `<Route>` `component` prop
 - [ ] Test app in Preact/add Preact support
 - [ ] Add prop checks with `PropTypes`
+- [ ] Remove need to polyfill `Object.assign` and possibly `Promise`
 - [ ] General cleanup and optimizations
 - [ ] Add more animations to the demo page
 
