@@ -1,0 +1,36 @@
+{
+  "projectName": "smoothr",
+  "projectOwner": "n8jadams",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "n8jadams",
+      "name": "Nate Adams",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/24380612?v=4",
+      "profile": "https://github.com/n8jadams",
+      "contributions": [
+        "code",
+        "design",
+        "doc",
+        "example",
+        "ideas",
+        "platform"
+      ]
+    },
+    {
+      "login": "mkartchner994",
+      "name": "Morgan Kartchner",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/3399907?v=4",
+      "profile": "https://github.com/mkartchner994",
+      "contributions": [
+        "ideas",
+        "infra"
+      ]
+    }
+  ],
+  "repoType": "github"
+}

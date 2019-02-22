@@ -1,7 +1,21 @@
 {
   "name": "smoothr",
   "version": "0.1.0",
-  "description": "Smoothr: Smooth Router - A custom React router that leverages the Web Animations API and CSS animations",
+  "description": "Smoothr: Smooth Router - A custom React router that leverages the Web Animations API and CSS animations.",
+  "keywords": [
+    "react",
+    "preact",
+    "router",
+    "route",
+    "routing",
+    "animation",
+    "animating",
+    "transition",
+    "web animations api",
+    "spa",
+    "single page app",
+    "single page apps"
+  ],
   "main": "dist/smoothr.cjs.js",
   "jsnext:main": "dist/smoothr.esm.js",
   "module": "dist/smoothr.esm.js",
@@ -9,6 +23,7 @@
   "license": "MIT",
   "scripts": {
     "contributors:add": "all-contributors add",
+    "contributors:generate": "all-contributors generate",
     "build": "yarn install; kcd-scripts build --bundle --p-react"
   },
   "files": [
