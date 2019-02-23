@@ -221,8 +221,9 @@ Links are wrappers around anchor (`<a>`) tags, except it adds the `disabled` pro
 ## To do list before version 1.0.0:
 - [x] Release initial build to NPM
 - [x] Add ability to validate and mask URL variables on navigation
-- [ ] Test app in Preact/add Preact support
+- [x] Test on Chrome, Firefox, Safari, and IE11 (if it works in IE11 it should work on Edge... right? 😂)
 - [ ] Add prop checks with `PropTypes`
+- [ ] Test app in Preact/add Preact support
 - [ ] Remove need to polyfill `Object.assign` and possibly `Promise`
 - [ ] General cleanup and optimizations
 - [ ] Add more animations to the demo page
