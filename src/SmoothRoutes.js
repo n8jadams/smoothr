@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import pathToRegexp from 'path-to-regexp';
 import { SmoothRContext } from './SmoothRContext';
-import { generateHash } from './generateHash';
+import { generateHash } from './utils/generateHash';
 
 function assignUserSetProps(attributes, props) {
   Object.keys(attributes).forEach(propName => {
@@ -55,10 +55,14 @@ class RenderComponent extends Component {
           return;
         }
       const path = c.props.path.replace(/\?(.*)|\#(.*)/, '');
-      const routeObj = {
+      let routeObj = {
         path: path,
-        pathRegexp: pathToRegexp(path)
+        pathRegexp: pathToRegexp(path),
       };
+      // Optionally add the pathMask prop
+      if(c.props.path.indexOf(':') !== -1 && c.props.pathMask) {
+        routeObj.pathMask = c.props.pathMask;
+      }
       routeConsts.push(routeObj);
     });
     this.props.context.setRouteConsts(routeConsts, notFoundPath);
