@@ -1,6 +1,6 @@
 {
   "name": "smoothr",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Smoothr: Smooth Router - A custom React router that leverages the Web Animations API and CSS animations.",
   "keywords": [
     "react",
@@ -14,7 +14,8 @@
     "web animations api",
     "spa",
     "single page app",
-    "single page apps"
+    "single page apps",
+    "single"
   ],
   "main": "dist/smoothr.cjs.js",
   "jsnext:main": "dist/smoothr.esm.js",

@@ -83,7 +83,7 @@ const App = () => (
 ReactDOM.render(<App />, document.getElementById('root'));
 ```
 
-For a more complete example, check out [the demo](http://n8jadams.github.com/smoothr-demo) and its [source code](https://github.com/n8jadams/smoothr/blob/master/example/src/index.js)
+For a more complete example, check out [the demo](http://n8jadams.github.io/smoothr-demo) and its [source code](https://github.com/n8jadams/smoothr/blob/master/example/src/index.js)
 
 ## API Documentation
 
