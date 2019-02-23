@@ -13,7 +13,7 @@ function Home() {
 }
 
 function Color(props) {
-  const { red, green, blue } = props;
+  let { red, green, blue } = props;
   red = Math.min(red, 255);
   green = Math.min(green, 255);
   blue = Math.min(blue, 255);
