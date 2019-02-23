@@ -1,6 +1,6 @@
 {
   "name": "smoothr",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Smoothr: Smooth Router - A custom React router that leverages the Web Animations API and CSS animations.",
   "keywords": [
     "react",
@@ -48,7 +48,6 @@
     "serve": "^10.0.2",
     "path-to-regexp": "^3.0.0"
   },
-  "dependencies": {},
   "eslintConfig": {
     "extends": "./node_modules/kcd-scripts/eslint.js"
   },

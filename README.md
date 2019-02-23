@@ -1,5 +1,8 @@
-# Smoothr: Smooth Router
-A custom React router that leverages the Web Animations API and CSS animations. [Check out the demo!](https://n8jadams.github.io/smoothr-demo/)
+# Smoothr
+## Smooth Router
+A custom React router that leverages the Web Animations API and CSS animations. 
+
+[Check out the demo!](https://n8jadams.github.io/smoothr-demo/)
 
 ![Smoothr Logo](assets/big-logo.png)
 
@@ -162,6 +165,7 @@ Most of the actual animation configuration takes place on the `<Route>` level. A
 * `reverseAnimationIn` - _(array of objects/string indicating class name)_ - Same as the `animationIn` but happens when the user nagivates back with the "back" button in their browser.
 * `reverseAnimationOut` - _(array of objects/string indicating class name)_ - Reverse equivalent of the `animationOut` prop.
 * `reverseAnimationOpts` - _(object with keys for `duration` and `easing`)_ - Reverse equivalent of the `animationOpts` prop.
+* `notFound` - _(No type, just add the prop)_ - This designates a `path` and `component` to show when the URL doesn't match any of the other paths.
 * Any other props that are set will be passed down to the rendered `component`.
 
 ### `<Link>`
