@@ -105,7 +105,7 @@ export default class App extends React.Component {
                 <Link href="/color/255/209/102">Yellow</Link>
                 <Link href="/color/117/219/205">Turquoise</Link>
                 <Link href="/smoothie">Smoothie</Link>
-                {/* This will redirect on page load to the 404 page */}
+                {/* This will redirect to the set `notFound` url */}
                 <Link href="/show404page">Invalid Link</Link>
               </div>
             </div>
