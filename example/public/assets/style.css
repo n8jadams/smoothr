@@ -46,7 +46,7 @@ header h1 span[role='img'] {
   flex-direction: column;
   max-width: 250px;
 }
-@media (min-width: 740px) {
+@media (min-width: 485px) {
   .options-container {
     align-items: flex-start;
     justify-content: center;
@@ -77,14 +77,14 @@ input {
   background-color: #ef476f;
 }
 .links {
-  max-width: 700px;
+  max-width: 450px;
   margin: auto;
   display: flex;
   flex-direction: column;
   text-align: center;
   font-size: 1rem;
 }
-@media (min-width: 740px) {
+@media (min-width: 485px) {
   .links {
     flex-direction: row;
     justify-content: space-between;
@@ -113,6 +113,7 @@ a[href='/smoothr-demo/color/117/219/205'] {
 main {
   background-color: #fffcf9;
   flex: 1;
+  min-height: 125px;
   display: flex;
   flex-direction: column;
   position: relative;

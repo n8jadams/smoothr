@@ -91,11 +91,17 @@ For a more complete example, check out [the demo](http://n8jadams.github.io/smoo
 ```
 git clone https://github.com/n8jadams/smoothr.git
 
-cd smoothr/example
+cd smoothr
 
-yarn install
+npm install
 
-yarn start
+npm run build
+
+cd example
+
+npm install
+
+npm run start
 ```
 
 ## API Documentation

@@ -102,21 +102,11 @@ export default class App extends React.Component {
                   You can also pass an onClick prop if needed.
                 */}
                 <Link href="/">Home</Link>
-                {/*
-                  If the `fuzzyDisable` prop is set, it will disable the link
-                  if the route matches the current variabled route.
-                */}
-                <Link 
-                  fuzzyDisable
-                  onClick={() => console.log('Clicked yellow!')}
-                  href="/color/255/209/102"
-                >
-                  Yellow (fuzzyDisabled)
-                </Link>
+                <Link href="/color/255/209/102">Yellow</Link>
                 <Link href="/color/117/219/205">Turquoise</Link>
                 <Link href="/smoothie">Smoothie</Link>
                 {/* This will redirect on page load to the 404 page */}
-                <a href="/smoothr-demo/show404page">Simulate 404 (Regular &lt;a&gt;)</a>
+                <Link href="/smoothr-demo/show404page">Invalid Link</Link>
               </div>
             </div>
           </header>
