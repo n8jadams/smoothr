@@ -106,7 +106,7 @@ export default class App extends React.Component {
                 <Link href="/color/117/219/205">Turquoise</Link>
                 <Link href="/smoothie">Smoothie</Link>
                 {/* This will redirect on page load to the 404 page */}
-                <Link href="/smoothr-demo/show404page">Invalid Link</Link>
+                <Link href="/show404page">Invalid Link</Link>
               </div>
             </div>
           </header>
