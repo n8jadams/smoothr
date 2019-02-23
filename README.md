@@ -91,17 +91,19 @@ For a more complete example, check out [the demo](http://n8jadams.github.io/smoo
 ```
 git clone https://github.com/n8jadams/smoothr.git
 
+# Set up a local version of the library
 cd smoothr
 
 npm install
 
 npm run build
 
+# Start the hot-reload server (like create-react-app)
 cd example
 
-npm install
+yarn install
 
-npm run start
+yarn run start
 ```
 
 ## API Documentation
@@ -192,7 +194,7 @@ Links are wrappers around anchor (`<a>`) tags, except it adds the `disabled` pro
 #### Available props: (* indicates a required prop)
 * `href`* - _(string)_ - Same as anchor tag
 * `onClick` - _(function)_ - This is self-explanatory
-* `fuzzyDisable` - _(bool)_ - If is prop is set to `true`, it will disable the link if the route matches the current variabled route. By default, only exact url matches will be disabled.
+* `fuzzyDisable` - _(No type, just add the prop)_ - If is prop is set, it will disable the link if the route matches the current variabled route. By default, only exact url matches will be disabled.
 * Any other props that are set will be passed down to the rendered anchor tag.
 
 ## To do list:
