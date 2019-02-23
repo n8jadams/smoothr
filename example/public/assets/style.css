@@ -41,12 +41,12 @@ header h1 span[role='img'] {
   display: flex;
   color: #FFFCF9;
   margin: 0 auto;
-  padding: 0 5px 5px 5px;
+  padding: 0 5px 10px 5px;
   font-size: 0.8rem;
   flex-direction: column;
   max-width: 250px;
 }
-@media (min-width: 485px) {
+@media (min-width: 740px) {
   .options-container {
     align-items: flex-start;
     justify-content: center;
@@ -77,14 +77,14 @@ input {
   background-color: #ef476f;
 }
 .links {
-  max-width: 500px;
+  max-width: 700px;
   margin: auto;
   display: flex;
   flex-direction: column;
   text-align: center;
   font-size: 1rem;
 }
-@media (min-width: 485px) {
+@media (min-width: 740px) {
   .links {
     flex-direction: row;
     justify-content: space-between;
@@ -94,6 +94,11 @@ input {
 a,
 a:visited {
   color: #fffcf9;
+  display: block;
+  height: 1.5rem;
+  padding: 5px 0;
+  font-style: italic;
+  text-decoration: none;
 }
 a[disabled] {
   opacity: 0.5;
@@ -138,6 +143,10 @@ footer {
   color: #FFFCF9;
   text-align: center;
   font-size: 0.8rem;
+}
+footer * {
+  display: inline;
+  line-height: 1rem;
 }
 
 /* Overlay section */

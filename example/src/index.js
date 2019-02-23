@@ -108,15 +108,15 @@ export default class App extends React.Component {
                 */}
                 <Link 
                   fuzzyDisable
-                  onClick={() => console.log('Clicked turqoise!')}
+                  onClick={() => console.log('Clicked yellow!')}
                   href="/color/255/209/102"
                 >
-                  Yellow
+                  Yellow (fuzzyDisabled)
                 </Link>
                 <Link href="/color/117/219/205">Turquoise</Link>
                 <Link href="/smoothie">Smoothie</Link>
                 {/* This will redirect on page load to the 404 page */}
-                <a href="/smoothr-demo/show404page">Invalid Link</a>
+                <a href="/smoothr-demo/show404page">Simulate 404 (Regular &lt;a&gt;)</a>
               </div>
             </div>
           </header>

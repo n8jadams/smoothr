@@ -86,7 +86,17 @@ const App = () => (
 ReactDOM.render(<App />, document.getElementById('root'));
 ```
 
-For a more complete example, check out [the demo](http://n8jadams.github.io/smoothr-demo) and its [source code](https://github.com/n8jadams/smoothr/blob/master/example/src/index.js)
+For a more complete example, check out [the demo](http://n8jadams.github.io/smoothr-demo) and its [source code](https://github.com/n8jadams/smoothr/blob/master/example/src/index.js) If you want to play around with this example, run the following:
+
+```
+git clone https://github.com/n8jadams/smoothr.git
+
+cd smoothr/example
+
+yarn install
+
+yarn start
+```
 
 ## API Documentation
 
@@ -171,7 +181,7 @@ Most of the actual animation configuration takes place on the `<Route>` level. A
 ### `<Link>`
 
 #### Usage:
-Links are wrappers around anchor (`<a>`) tags, except it adds the `disabled` property to simulate the CSS `:visited` behavior (unless you manually pass a `disabled` property)
+Links are wrappers around anchor (`<a>`) tags, except it adds the `disabled` property when the `href` matches the current URL (unless you manually pass a `disabled` property)
 
 #### Available props: (* indicates a required prop)
 * `href`* - _(string)_ - Same as anchor tag
