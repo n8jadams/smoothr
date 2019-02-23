@@ -19,7 +19,7 @@ May your single page routing animations be smoother, with Smoothr... (pardon the
 
 * React 16.3.0 or higher
 * Support for `Object.assign` and `Promise` in Javascript
-* Any necessary polyfills for the [Web Animations API](https://github.com/web-animations/web-animations-js)
+* Any necessary polyfills for the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) (I had the best luck with [this one](https://github.com/wnda/web-animations-api-shiv), but [this one](https://github.com/web-animations/web-animations-js) may also be sufficient.)
 
 ### Installation
 
@@ -177,6 +177,27 @@ Most of the actual animation configuration takes place on the `<Route>` level. A
 // If the url is "/users/12345", the following will be rendered:
 <UsersPage id="12345">
 ```
+* `pathMask` - _(function)_ - Validate and modify the variables passed when this <Route> is navigated to. The return value must match the pattern of the path. If it doesn't, the `notFound` path will be used. This will only work if the `path` component has variables. Example, which can by tested on the [live demo](https://n8jadams.github.io/smoothr-demo):
+
+```jsx
+<Route
+  path="/color/:red/:green/:blue"
+  pathMask={({red, green, blue}) => {
+    // Ensure they're all numeric
+    if(isNaN(red) || isNaN(green) || isNaN(blue)) {
+      // Return anything not matching the `path` pattern to trigger a 404
+      return false; 
+    }
+    // Make sure they're all valid RGB values
+    red = Math.min(Math.abs(parseInt(red)), 255);
+    green = Math.min(Math.abs(parseInt(green)), 255);
+    blue = Math.min(Math.abs(parseInt(blue)), 255);
+    // Return the valid url
+    return `/color/${red}/${green}/${blue}`;
+  }}
+  // ...
+/>
+```
 * `animationIn` - _(array of objects/string indicating class name)_ - The value of this prop corresponds to the first argument of the [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate) method, or a css class name, which will be applied to the `<Route>` DOM element during the duration of the animation. If this isn't passed, then no animation will occur, but be aware that the incoming `<Route>` won't show up until the duration ends, as set in the `configAnimationSetDuration` prop of the top level `<Smoothr>` component.
 * `animationOut` - _(array of objects/string indicating class name)_ - Similiar to `animationIn`, but is applied to the outgoing `<Route>`
 * `animationOpts` - _(object with keys for `duration` and `easing`)_ - This corresponds to the second argument of the [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate) method. These options are applied to both the incoming and outgoing `<Route>`s during transition. If using a CSS class transition, then this is optional.
@@ -197,9 +218,9 @@ Links are wrappers around anchor (`<a>`) tags, except it adds the `disabled` pro
 * `fuzzyDisable` - _(No type, just add the prop)_ - If is prop is set, it will disable the link if the route matches the current variabled route. By default, only exact url matches will be disabled.
 * Any other props that are set will be passed down to the rendered anchor tag.
 
-## To do list:
+## To do list before version 1.0.0:
 - [x] Release initial build to NPM
-- [ ] Test callback functions as `<Route>` `component` prop
+- [x] Add ability to validate and mask URL variables on navigation
 - [ ] Test app in Preact/add Preact support
 - [ ] Add prop checks with `PropTypes`
 - [ ] Remove need to polyfill `Object.assign` and possibly `Promise`

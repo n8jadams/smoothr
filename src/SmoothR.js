@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { SmoothRContext } from './SmoothRContext';
+import { extractPathVars } from './utils/extractPathVars';
 
 class Smoothr extends Component {
   constructor(props) {
@@ -27,17 +28,14 @@ class Smoothr extends Component {
   }
 
   setRouteConsts = (routeConsts, notFoundPath) => {
+    function merge(a, b, prop){
+      let reduced =  a.filter( aitem => ! b.find ( bitem => aitem[prop] === bitem[prop]) )
+      return reduced.concat(b);
+    }
+
     // Add any routes to the routeConsts that aren't already there
     this.setState(state => {
-      let newStateObj = { routeConsts: state.routeConsts };
-      routeConsts.forEach(proposedRouteConst => {
-        let routeIsSet = state.routeConsts.some(
-          setRouteConst => proposedRouteConst.path === setRouteConst.path
-        );
-        if (!routeIsSet) {
-          newStateObj.routeConsts.push(proposedRouteConst);
-        }
-      });
+      let newStateObj = { routeConsts: merge(state.routeConsts, routeConsts) };
       if (state.defaultNotFoundPath) {
         newStateObj.defaultNotFoundPath = false;
         newStateObj.notFoundPath = notFoundPath;
@@ -101,6 +99,7 @@ class Smoothr extends Component {
   handleRouteChange = (newRouteUrl, backNavigation = false) => {
     // Remove query string and hash from new url
     let cleanNewUrl = newRouteUrl.replace(/\?(.*)|\#(.*)/, '');
+    let queryStringHash = newRouteUrl.split(cleanNewUrl).join('');
 
     // Handle 404
     let incomingRoute, outgoingRoute;
@@ -112,8 +111,20 @@ class Smoothr extends Component {
       }
       // If it matches the new URL
       if (RegExp(routeObj.pathRegexp).test(cleanNewUrl)) {
-        incomingRoute = routeObj.path;
-        newUrlIsFound = true;
+        // Handle pathMasking
+        if(routeObj.pathMask) {
+          const keyValObj = extractPathVars(routeObj.path, cleanNewUrl);
+          const maskedUrl = routeObj.pathMask(keyValObj);
+          if(typeof maskedUrl === 'string' && RegExp(routeObj.pathRegexp).test(maskedUrl)) {
+            cleanNewUrl = maskedUrl;
+            newRouteUrl = `${maskedUrl}${queryStringHash}`;
+            incomingRoute = routeObj.path;
+            newUrlIsFound = true;
+          }
+        } else {
+          incomingRoute = routeObj.path;
+          newUrlIsFound = true;
+        }
       }
     });
     if (!newUrlIsFound) {

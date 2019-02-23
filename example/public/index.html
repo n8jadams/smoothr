@@ -49,7 +49,7 @@
         // Conditionally add the web animation API polyfill
         if(!document.body.animate) {
           var polyfillScript = document.createElement('script');
-          polyfillScript.setAttribute('src', 'https://rawgit.com/web-animations/web-animations-js/master/web-animations.min.js');
+          polyfillScript.setAttribute('src', '%PUBLIC_URL%/assets/waapi-polyfill.min.js');
           document.head.appendChild(polyfillScript);
         }
       })();

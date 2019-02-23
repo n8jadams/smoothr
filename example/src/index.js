@@ -110,7 +110,7 @@ export default class App extends React.Component {
               </div>
             </div>
           </header>
-          <main>
+          <div className="main">
             {/*
               Animations are set by the props of the INCOMING <Route>.
               `animationIn` will be performed on the same, incoming <Route>.
@@ -155,9 +155,30 @@ export default class App extends React.Component {
                 data-some-other-prop={true}
               />
               <Route
-                /* Variables in routes. */
+                /* 
+                  Variables in routes. 
+                  This example will pass props for `red`, `green`, and `blue` to the component. 
+                */
                 path="/color/:red/:green/:blue"
-                /* This will pass props for `red`, `green`, and `blue` to the component. */
+                /*
+                  Validate and modify the variables passed when this <Route> is navigated to. 
+                  The return value must match the pattern of the path. If it doesn't, the
+                  `notFound` path will be used. This will only work if the `path` component
+                  has variables.
+                */
+                pathMask={({red, green, blue}) => {
+                  // Validate that they're all numbers
+                  if(isNaN(red) || isNaN(green) || isNaN(blue)) {
+                    // Return anything else not matching the `path` pattern to trigger a 404
+                    return false; 
+                  }
+                  // Make sure they're all valid RGB values
+                  red = Math.min(Math.abs(parseInt(red)), 255);
+                  green = Math.min(Math.abs(parseInt(green)), 255);
+                  blue = Math.min(Math.abs(parseInt(blue)), 255);
+                  // Return the validated url
+                  return `/color/${red}/${green}/${blue}`;
+                }}
                 component={Color}
                 animationIn={this.state.animationIn}
                 animationOut={this.state.animationOut}
@@ -195,7 +216,7 @@ export default class App extends React.Component {
                 component={NotFound}
               />
             </SmoothRoutes>
-          </main>
+          </div>
           <footer>
             Smoothr was written by{' '}
             <a href="https://github.com/n8jadams">Nate Adams</a>.{' '}

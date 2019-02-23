@@ -110,7 +110,7 @@ a[href='/smoothr-demo/color/117/219/205'] {
   color: rgb(117, 219, 205);
 }
 /* Main page content */
-main {
+.main {
   background-color: #fffcf9;
   flex: 1;
   min-height: 125px;
@@ -135,6 +135,15 @@ section span[role='img'] {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+/* IE specific stuff */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .main {
+    min-height: calc(100vh - 200px);
+  }
+  section span[role='img'] {
+    color: #ef476f;
+  }
 }
 /* Footer */
 footer {
