@@ -53,9 +53,10 @@ const App = () => (
         <Route
           path="/"
           component={Page}
-          // Use the Web Animations API
+          // Use the Web Animations API, first argument of Element.animate()
           animationIn={[{ opacity: 0 }, { opacity: 1 }]}
           animationOut={[{ opacity: 1 }, { opacity: 0 }]}
+          // and the second argument of Element.animate()
           animationOpts={{
             duration: 750,
             easing: 'ease-in-out'
@@ -103,7 +104,7 @@ cd example
 
 yarn install
 
-yarn run start
+yarn start
 ```
 
 ## API Documentation
@@ -114,7 +115,7 @@ yarn run start
 The `<Smoothr>` component just needs to be used up the tree of any `<Link>`s or `<SmoothRoutes>`. I just recommend having it at the top level of your Single Page App.
 
 #### Available props: (* indicates a required prop)
-* `configAnimationSetDuration`* - _(function)_ - This method allows changing of local state in order to conditionally set the upcoming animation. It is a `Promise`, to ensure any asynchonous state changes to be completed before the animating begins. Example:
+* `configAnimationSetDuration`* - _(function)_ - This method allows changing of local state in order to conditionally set the upcoming animation. It is use in a `Promise` by the library to ensure the completion of any asynchonous state changes before the animating begins. Example:
 
 ```javascript
 configAnimationSetDuration = ({
@@ -132,7 +133,7 @@ configAnimationSetDuration = ({
 };
 ```
 
-* `onAnimationStart` - _(function)_ - This function will run right before the animation begins. Use it to imperitively kick off transition animations. If you want to kick off an animation based on incoming or outgoing routes, use `configAnimationSet` to set some state, and then use that state in this method. Example:
+* `onAnimationStart` - _(function)_ - This function will run right before the animation begins. Use it to imperitively kick off transition animations. If you want to kick off an animation based on incoming or outgoing routes, use `configAnimationSetDuration` to set some state, and then use that state in this method. Example:
 
 ```javascript
 onAnimationStart = ({ initialPageload }) => {
@@ -142,11 +143,7 @@ onAnimationStart = ({ initialPageload }) => {
 
 * `onAnimationEnd` - _(function)_ - This takes place after the animation is finished. Reset your animations if they're saved in state, or do something else. There are no arguments passed.
 
-* `originPath` - _(string)_ - The path after the domain to the origin of this single page app.
-Include the beginning backslash, but not the trailing backslash.
-All of the `<Link />` `href` properties will be relative to that origin path.
-Example: `"/smoothr-app"`, and `<Link href="/page1" />` will link to `"/smoothr-app/page1"`.
-This defaults to an empty string, which signifies the document root.
+* `originPath` - _(string)_ - The path after the domain to the origin of this single page app. Include the beginning backslash, but not the trailing backslash. All of the `<Link />` `href` properties will be relative to that origin path. Example: `"/smoothr-app"`, and `<Link href="/page1" />` will link to `"/smoothr-app/page1"`. This defaults to an empty string, which signifies the document root.
 
 ### `<SmoothRoutes>`
 
@@ -177,7 +174,7 @@ Most of the actual animation configuration takes place on the `<Route>` level. A
 // If the url is "/users/12345", the following will be rendered:
 <UsersPage id="12345">
 ```
-* `pathMask` - _(function)_ - Validate and modify the variables passed when this <Route> is navigated to. The return value must match the pattern of the path. If it doesn't, the `notFound` path will be used. This will only work if the `path` component has variables. Example, which can by tested on the [live demo](https://n8jadams.github.io/smoothr-demo):
+* `pathMask` - _(function)_ - Use this function to validate and modify the variables passed when this `<Route>` is navigated to. The return value must match the pattern of the path. If it doesn't, the `notFound` path will be used. This will only work if the `path` component has variables. Example, which can by tested on the [live demo](https://n8jadams.github.io/smoothr-demo):
 
 ```jsx
 <Route

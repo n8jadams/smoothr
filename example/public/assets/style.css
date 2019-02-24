@@ -136,6 +136,14 @@ section span[role='img'] {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+.smoothie-icon {
+  width: 55px;
+  padding-bottom: 25px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+}
 /* IE specific stuff */
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
   .main {

@@ -1,4 +1,5 @@
 import React from 'react';
+import SmoothieIcon from '../assets/images/small-logo.svg';
 
 function Home() {
   return (
@@ -29,9 +30,7 @@ function Smoothie() {
   return (
     <section>
       <div>
-        <span role="img" aria-label="Smoothie">
-          🥤
-        </span>
+        <img src={SmoothieIcon} alt="Smoothie" className="smoothie-icon" />
       </div>
     </section>
   );
