@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { SmoothRContext } from './SmoothRContext';
 import { extractPathVars } from './utils/extractPathVars';
+import { getLSArray, pushLSArray } from './utils/lsArray';
+import { LS_KEYS } from './consts/LS_KEYS';
 
 class Smoothr extends Component {
   constructor(props) {
@@ -21,7 +23,9 @@ class Smoothr extends Component {
       backNavigation: false,
       routeConsts: [],
       defaultNotFoundPath: true,
-      notFoundPath: '/notfound'
+      notFoundPath: '/notfound',
+      visitedUrls: getLSArray(LS_KEYS.VISITED_URL_LIST),
+      visitedRoutes: getLSArray(LS_KEYS.VISITED_ROUTE_LIST)
     };
 
     this.routeVars = {};
@@ -52,12 +56,12 @@ class Smoothr extends Component {
   };
 
   componentDidMount() {
-    window.addEventListener('popstate', this.handlePopState);
-
+    // Run the initial page load after setting all routeGroupVars
     setTimeout(() => {
-      // Run the initial page load after setting all routeGroupVars
       this.handleRouteChange(this.state.currentUrl);
     }, 0);
+
+    window.addEventListener('popstate', this.handlePopState);
   }
 
   componentWillUnmount() {
@@ -96,10 +100,10 @@ class Smoothr extends Component {
     this.handleRouteChange(e.state.url, backNavigation);
   };
 
-  handleRouteChange = (newRouteUrl, backNavigation = false) => {
+  handleRouteChange = (incomingUrl, backNavigation = false, linkNavigation = false) => {
     // Remove query string and hash from new url
-    let cleanNewUrl = newRouteUrl.replace(/\?(.*)|\#(.*)/, '');
-    let queryStringHash = newRouteUrl.split(cleanNewUrl).join('');
+    let cleanNewUrl = incomingUrl.replace(/\?(.*)|\#(.*)/, '');
+    let queryStringHash = incomingUrl.split(cleanNewUrl).join('');
 
     // Handle 404
     let incomingRoute, outgoingRoute;
@@ -117,7 +121,7 @@ class Smoothr extends Component {
           const maskedUrl = routeObj.pathMask(keyValObj);
           if(typeof maskedUrl === 'string' && RegExp(routeObj.pathRegexp).test(maskedUrl)) {
             cleanNewUrl = maskedUrl;
-            newRouteUrl = `${maskedUrl}${queryStringHash}`;
+            incomingUrl = `${maskedUrl}${queryStringHash}`;
             incomingRoute = routeObj.path;
             newUrlIsFound = true;
           }
@@ -128,67 +132,91 @@ class Smoothr extends Component {
       }
     });
     if (!newUrlIsFound) {
-      newRouteUrl = this.state.notFoundPath;
+      incomingUrl = this.state.notFoundPath;
       incomingRoute = this.state.notFoundPath;
     }
     // Handle if the previous url was the 404
     if(this.state.currentUrl === this.state.notFoundPath) {
       outgoingRoute = this.state.notFoundPath;
     }
+    const outgoingUrl = !newUrlIsFound ? this.state.notFoundPath : this.state.currentUrl
 
-    // Handle initial pageload without animating
-    if (this.state.initialPageload) {
-      window.history.replaceState(
-        { url: newRouteUrl, pageNavigated: this.state.pageNavigated },
+    // All incoming routes and URLs are set
+    let newStateObj = {};
+    if(linkNavigation) {
+      // Change url in browser
+      window.history.pushState(
+        {
+          url: incomingUrl,
+          pageNavigated: this.state.pageNavigated + 1
+        },
         '',
-        `${this.state.originPath}${newRouteUrl}`
+        `${this.state.originPath}${incomingUrl}`
       );
-      this.props.onAnimationStart({
-        initialPageload: true
-      });
-      this.setState({
-        initialPageload: false,
-        currentUrl: cleanNewUrl
-      });
-    } else {
-      // Configure the animation (or lack thereof)
-      let duration = 0;
-      new Promise(resolve => {
-        duration = this.props.configAnimationSetDuration({
-          outgoingUrl: !newUrlIsFound ? this.state.notFoundPath : this.state.currentUrl,
-          incomingUrl: newRouteUrl,
-          outgoingRoute,
-          incomingRoute,
-          backNavigation
-        });
-        duration = !newUrlIsFound ? 0 : duration;
-        resolve();
-      }).then(() => {
-        this.props.onAnimationStart({
-          initialPageload: false
-        });
-        if (!duration || duration < 1) {
-          this.handleAfterTransition(cleanNewUrl);
-        } else {
-          // Execute the animation
-          this.setState(
-            {
-              newUrl: cleanNewUrl,
-              pageNavigated: backNavigation
-                ? this.state.pageNavigated - 1
-                : this.state.pageNavigated + 1,
-              backNavigation
-            },
-            () => {
-              setTimeout(() => {
-                this.handleAfterTransition(cleanNewUrl);
-              }, duration);
-            }
-          );
-        }
-      });
+      // Push visited links to state and local storage
+      if(this.state.visitedUrls.indexOf(outgoingUrl) === -1) {
+        newStateObj.visitedUrls = [...this.state.visitedUrls, outgoingUrl];
+        pushLSArray(LS_KEYS.VISITED_URL_LIST, outgoingUrl, true);
+      }
+      if(this.state.visitedRoutes.indexOf(outgoingRoute) === -1) {
+        newStateObj.visitedRoutes = [...this.state.visitedRoutes, outgoingRoute];
+        pushLSArray(LS_KEYS.VISITED_ROUTE_LIST, outgoingRoute, true);
+      }
     }
-    return newRouteUrl;
+    this.setState(newStateObj, () => {
+      // Handle initial pageload without animating
+      if (this.state.initialPageload) {
+        window.history.replaceState(
+          { url: incomingUrl, pageNavigated: this.state.pageNavigated },
+          '',
+          `${this.state.originPath}${incomingUrl}`
+        );
+        this.props.onAnimationStart({
+          initialPageload: true
+        });
+        this.setState({
+          initialPageload: false,
+          currentUrl: cleanNewUrl
+        });
+      } else {
+        // Configure the animation (or lack thereof)
+        let duration = 0;
+        new Promise(resolve => {
+          duration = this.props.configAnimationSetDuration({
+            outgoingUrl,
+            incomingUrl,
+            outgoingRoute,
+            incomingRoute,
+            backNavigation
+          });
+          duration = !newUrlIsFound ? 0 : duration;
+          resolve();
+        }).then(() => {
+          this.props.onAnimationStart({
+            initialPageload: false
+          });
+          if (!duration || duration < 1) {
+            this.handleAfterTransition(cleanNewUrl);
+          } else {
+            // Execute the animation
+            this.setState(
+              {
+                newUrl: cleanNewUrl,
+                pageNavigated: backNavigation
+                  ? this.state.pageNavigated - 1
+                  : this.state.pageNavigated + 1,
+                backNavigation
+              },
+              () => {
+                setTimeout(() => {
+                  this.handleAfterTransition(cleanNewUrl);
+                }, duration);
+              }
+            );
+          }
+        });
+      }
+    });
   };
 
   handleAfterTransition = cleanNewUrl => {

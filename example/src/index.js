@@ -17,6 +17,7 @@ const randomColor5 = generateRandomColor();
 
 export default class App extends React.Component {
   state = {
+    animating: false,
     showOverlay: false,
     animation: 'Fade',
     animationIn: [{ opacity: 0 }, { opacity: 1 }],
@@ -42,6 +43,9 @@ export default class App extends React.Component {
     // If the user nagivated with the "back" button in the browser
     backNavigation
   }) => {
+    // Disable all navigation during animation in this app
+    this.setState({animating: true});
+
     // Have this method return the duration of the animation as an int in milliseconds
     return incomingRoute === '/notfound' ? 0 : this.state.duration;
   };
@@ -57,7 +61,9 @@ export default class App extends React.Component {
     This takes place after the animation is finished.
     Reset your animations, or do something else...
   */
-  onAnimationEnd = () => {};
+  onAnimationEnd = () => {
+    this.setState({animating: false});
+  };
 
   render() {
     return (
@@ -91,15 +97,16 @@ export default class App extends React.Component {
               animation={this.state.animation}
               duration={this.state.duration}
               easing={this.state.easing}
+              animating={this.state.animating}
             />
             <div className="links-container">
               <div className="links">
                 {/* 
-                  Links are wrappers around anchor <a> tags, except it adds the
-                  `disabled` property to simulate :visited behavior
-                  (unless you manually pass a `disabled` property.)
-                  
-                  You can also pass an onClick prop if needed.
+                  Links are wrappers around anchor (`<a>`) tags. 
+                  The library adds the prop `data-smoothr-current-link="true"` 
+                  when the `href` matches the current URL, 
+                  and the `data-smoothr-visited-link` property 
+                  to simulate the css `:visited` rule.
                 */}
                 <Link href="/">Home</Link>
                 <Link href="/color/255/209/102">Yellow</Link>

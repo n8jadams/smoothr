@@ -19,12 +19,12 @@ May your single page routing animations be smoother, with Smoothr... (pardon the
 
 * React 16.3.0 or higher
 * Support for `Object.assign` and `Promise` in Javascript
-* Any necessary polyfills for the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) (I had the best luck with [this one](https://github.com/wnda/web-animations-api-shiv), but [this one](https://github.com/web-animations/web-animations-js) may also be sufficient.)
+* Any necessary polyfills for the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) (I preffered [this one](https://github.com/wnda/web-animations-api-shiv), but you may need [this one](https://github.com/web-animations/web-animations-js).)
 
 ### Installation
 
 ```
-npm install smoothr
+$ npm install smoothr
 ```
 
 ## Minimal Example Usage
@@ -87,25 +87,7 @@ const App = () => (
 ReactDOM.render(<App />, document.getElementById('root'));
 ```
 
-For a more complete example, check out [the demo](http://n8jadams.github.io/smoothr-demo) and its [source code](https://github.com/n8jadams/smoothr/blob/master/example/src/index.js) If you want to play around with this example, run the following:
-
-```
-git clone https://github.com/n8jadams/smoothr.git
-
-# Set up a local version of the library
-cd smoothr
-
-npm install
-
-npm run build
-
-# Start the hot-reload server (like create-react-app)
-cd example
-
-yarn install
-
-yarn start
-```
+For a more complete example, check out [the demo](http://n8jadams.github.io/smoothr-demo) and its [source code](https://github.com/n8jadams/smoothr/blob/master/example/src/index.js) If you want to play around with this example, see the setup instructions in the [Contributing section](#contributing).
 
 ## API Documentation
 
@@ -115,7 +97,7 @@ yarn start
 The `<Smoothr>` component just needs to be used up the tree of any `<Link>`s or `<SmoothRoutes>`. I just recommend having it at the top level of your Single Page App.
 
 #### Available props: (* indicates a required prop)
-* `configAnimationSetDuration`* - _(function)_ - This method allows changing of local state in order to conditionally set the upcoming animation. It is use in a `Promise` by the library to ensure the completion of any asynchonous state changes before the animating begins. Example:
+* `configAnimationSetDuration`* - _(function)_ - This method is the entry point into knowing what's going on with the animating and routing. It is used in a `Promise` which will resolve before starting the animation to ensure the completion of any asynchonous state changes before animating. Use it to change local state in order to conditionally set the upcoming animation. Example:
 
 ```javascript
 configAnimationSetDuration = ({
@@ -132,7 +114,6 @@ configAnimationSetDuration = ({
   return 750;
 };
 ```
-
 * `onAnimationStart` - _(function)_ - This function will run right before the animation begins. Use it to imperitively kick off transition animations. If you want to kick off an animation based on incoming or outgoing routes, use `configAnimationSetDuration` to set some state, and then use that state in this method. Example:
 
 ```javascript
@@ -143,7 +124,7 @@ onAnimationStart = ({ initialPageload }) => {
 
 * `onAnimationEnd` - _(function)_ - This takes place after the animation is finished. Reset your animations if they're saved in state, or do something else. There are no arguments passed.
 
-* `originPath` - _(string)_ - The path after the domain to the origin of this single page app. Include the beginning backslash, but not the trailing backslash. All of the `<Link />` `href` properties will be relative to that origin path. Example: `"/smoothr-app"`, and `<Link href="/page1" />` will link to `"/smoothr-app/page1"`. This defaults to an empty string, which signifies the document root.
+* `originPath` - _(string)_ - The path after the domain to the origin of this single page app. Include the beginning backslash, but not the trailing backslash. All of the `<Link>` `href` properties will be relative to that origin path. Example: `"/smoothr-app"`, and `<Link href="/page1" />` will link to `"/smoothr-app/page1"`. This defaults to an empty string, which signifies the document root.
 
 ### `<SmoothRoutes>`
 
@@ -207,18 +188,32 @@ Most of the actual animation configuration takes place on the `<Route>` level. A
 ### `<Link>`
 
 #### Usage:
-Links are wrappers around anchor (`<a>`) tags, except it adds the `disabled` property when the `href` matches the current URL (unless you manually pass a `disabled` property)
+Links are wrappers around anchor (`<a>`) tags. The library adds the prop `data-smoothr-current-link="true"` when the `href` matches the current URL, and the `data-smoothr-visited-link` property to simulate the css `:visited` rule. When styling, use these data-attributes in your css rules, like so
+
+```css
+a[data-smoothr-current-link="true"] {
+  /* some style to show the currently opened link here */
+}
+
+a:visited,
+a[data-smoothr-visited-link="true"] {
+  /* some style to show a visited link here */
+}
+```
 
 #### Available props: (* indicates a required prop)
 * `href`* - _(string)_ - Same as anchor tag
 * `onClick` - _(function)_ - This is self-explanatory
-* `fuzzyDisable` - _(No type, just add the prop)_ - If is prop is set, it will disable the link if the route matches the current variabled route. By default, only exact url matches will be disabled.
+* `fuzzyCurrent` - _(No type, just add the prop)_ - If is prop is set, the `data-smoothr-current-link` property will be added to the link if the route matches the current *variabled* route. By default, only exact url matches will have the `data-smoothr-current-link` property added.
+* `fuzzyVisited` - _(No type, just add the props)_ - Similiar to the `fuzzyCurrent` prop, but related to visited links. If the user visits a Route with a matching variable pattern, the `data-smoothr-visited-link` property will be added.
 * Any other props that are set will be passed down to the rendered anchor tag.
 
 ## To do list before version 1.0.0:
 - [x] Release initial build to NPM
 - [x] Add ability to validate and mask URL variables on navigation
 - [x] Test on Chrome, Firefox, Safari, and IE11 (if it works in IE11 it should work on Edge... right? 😂)
+- [x] Handle visited links and current links better
+- [ ] Add hash routing
 - [ ] Add prop checks with `PropTypes`
 - [ ] Test app in Preact/add Preact support
 - [ ] Remove need to polyfill `Object.assign` and possibly `Promise`
@@ -227,7 +222,27 @@ Links are wrappers around anchor (`<a>`) tags, except it adds the `disabled` pro
 
 ## Contributing
 
-I plan on maintaining this library. For bugs and enhancements, just add an issue and/or send pull request my way, and I'll review it! I'm definitely open to improvements.
+I plan on maintaining this library. For bugs and enhancements, just add an issue and/or send pull request my way, and I'll review it! I'm definitely open to improvements. 
+
+### Setup
+You can set up your development environment and use the example app as a test app by running the following commands: 
+
+```
+$ git clone https://github.com/n8jadams/smoothr.git
+$ cd smoothr
+$ npm install
+$ npm run build
+$ cd example
+$ yarn install
+$ yarn start
+```
+
+and then when you want to reload the package, from the `smoothr` directory
+```
+$ npm run build
+```
+
+It may take a while to download the dev dependencies.
 
 ## Contributors
 

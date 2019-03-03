@@ -47,7 +47,7 @@
           history.replaceState(null, null, redirect);
         }
         // Conditionally add the web animation API polyfill
-        if(!document.body.animate) {
+        if(!'animate' in HTMLElement.prototype) {
           var polyfillScript = document.createElement('script');
           polyfillScript.setAttribute('src', '%PUBLIC_URL%/assets/waapi-polyfill.min.js');
           document.head.appendChild(polyfillScript);

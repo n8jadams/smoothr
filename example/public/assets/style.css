@@ -91,8 +91,7 @@ input {
     text-align: left;
   }
 }
-a,
-a:visited {
+a {
   color: #fffcf9;
   display: block;
   height: 1.5rem;
@@ -100,7 +99,7 @@ a:visited {
   font-style: italic;
   text-decoration: none;
 }
-a[disabled] {
+a[data-smoothr-current-link="true"] {
   opacity: 0.5;
 }
 a[href='/smoothr-demo/color/255/209/102'] {
