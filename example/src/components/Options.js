@@ -49,7 +49,8 @@ function Options(props) {
         <input 
           type="checkbox"
           checked={props.showOverlay}
-          onChange={e => props.setState({showOverlay: !props.showOverlay})} 
+          onChange={e => props.setState({showOverlay: !props.showOverlay})}
+          disabled={props.animating}
         />
       </label>
       <div>
@@ -67,6 +68,7 @@ function Options(props) {
                 reverseAnimationOut: animation.reverseOut
               });
             }}
+            disabled={props.animating}
           >
             {Object.keys(animations).map((type, i) => (
               <option key={i} value={type}>
@@ -83,6 +85,7 @@ function Options(props) {
               props.setState({ duration: parseInt(e.target.value) })
             }
             value={props.duration}
+            disabled={props.animating}
           />
         </label>
         <label>
@@ -94,6 +97,7 @@ function Options(props) {
                 easing: e.target.value
               })
             }
+            disabled={props.animating}
           >
             {easingOptions.map((opt, i) => (
               <option key={i} value={opt}>
