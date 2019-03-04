@@ -82,7 +82,7 @@ function Options(props) {
           <input
             type="number"
             onChange={e => 
-              props.setState({ duration: e.target.value.replace(/[^0-9]/g, '') })}
+              props.setState({ duration: Math.abs(parseInt(e.target.value)) })}
             value={props.duration}
             readOnly={props.animating}
           />
