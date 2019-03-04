@@ -13,8 +13,7 @@ function Home() {
   );
 }
 
-function Color(props) {
-  const { red, green, blue } = props;
+function Color({red, green, blue}) {
   return (
     <section>
       <div style={{ backgroundColor: `rgb(${red}, ${green}, ${blue})` }}>

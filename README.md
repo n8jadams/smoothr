@@ -18,8 +18,8 @@ May your single page routing animations be smoother, with Smoothr... (pardon the
 ### Prerequisites
 
 * React 16.3.0 or higher
-* Support for `Object.assign` and `Promise` in Javascript
-* Any necessary polyfills for the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) (I preffered [this one](https://github.com/wnda/web-animations-api-shiv), but you may need [this one](https://github.com/web-animations/web-animations-js).)
+* Support for `Promise`s in Javascript
+* Any necessary polyfills for the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) (I preferred [this one](https://github.com/wnda/web-animations-api-shiv), but you may need [this one](https://github.com/web-animations/web-animations-js).)
 
 ### Installation
 
@@ -94,7 +94,7 @@ For a more complete example, check out [the demo](http://n8jadams.github.io/smoo
 ### `<Smoothr>`
 
 #### Usage: 
-The `<Smoothr>` component just needs to be used up the tree of any `<Link>`s or `<SmoothRoutes>`. I just recommend having it at the top level of your Single Page App.
+The `<Smoothr>` component just needs to be used up the tree of any `<Link>`s or `<SmoothRoutes>`. I just recommend having it at the top level of your Single Page App. `<Smoothr>` props are the top-level configuration for all routing.
 
 #### Available props: (* indicates a required prop)
 * `configAnimationSetDuration`* - _(function)_ - This method is the entry point into knowing what's going on with the animating and routing. It is used in a `Promise` which will resolve before starting the animation to ensure the completion of any asynchonous state changes before animating. Use it to change local state in order to conditionally set the upcoming animation. Example:
@@ -213,10 +213,11 @@ a[data-smoothr-visited-link="true"] {
 - [x] Add ability to validate and mask URL variables on navigation
 - [x] Test on Chrome, Firefox, Safari, and IE11 (if it works in IE11 it should work on Edge... right? 😂)
 - [x] Handle visited links and current links better
+- [x] Remove glitchiness around interrupted animations
 - [ ] Add hash routing
 - [ ] Add prop checks with `PropTypes`
 - [ ] Test app in Preact/add Preact support
-- [ ] Remove need to polyfill `Object.assign` and possibly `Promise`
+- [ ] Remove need to polyfill `Promise`?
 - [ ] General cleanup and optimizations
 - [ ] Add more animations to the demo page
 
