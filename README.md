@@ -18,8 +18,8 @@ May your single page routing animations be smoother, with Smoothr... (pardon the
 ### Prerequisites
 
 * React 16.3.0 or higher
-* Support for `Promise`s in Javascript
-* Any necessary polyfills for the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) (I preferred [this one](https://github.com/wnda/web-animations-api-shiv), but you may need [this one](https://github.com/web-animations/web-animations-js).)
+* Support for `Promise` in Javascript
+* Any necessary polyfills for the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) (I prefer [this one](https://github.com/wnda/web-animations-api-shiv), but you may need [this one](https://github.com/web-animations/web-animations-js).)
 
 ### Installation
 

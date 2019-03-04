@@ -242,6 +242,7 @@ class Smoothr extends Component {
               () => {
                 if (interrupted) {
                   clearTimeout(this.animationTimeout);
+                  this.props.onAnimationEnd();
                 } else {
                   this.animationTimeout = setTimeout(() => {
                     this.handleAfterTransition(cleanNewUrl);
