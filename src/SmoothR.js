@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { SmoothRContext } from './SmoothRContext';
+import { parseCurrentUrl } from './utils/parseCurrentUrl';
 import { extractPathVars } from './utils/extractPathVars';
 import { getLSArray, pushLSArray } from './utils/lsArray';
 import { LS_KEYS } from './consts/LS_KEYS';
@@ -8,15 +9,15 @@ class Smoothr extends Component {
   constructor(props) {
     super(props);
 
-    const originPath = props.originPath || '';
-    const currentUrl =
-      window.location.pathname === originPath
-        ? `/${window.location.search}${window.location.hash}`
-        : `${window.location.pathname}${window.location.search}${
-            window.location.hash
-          }`
-            .split(originPath)
-            .join('');
+    // Use window.location.href to handle hash and set current url
+    let originPath = '';
+    if (props.originPath && props.originPath !== '/') {
+      originPath = props.originPath;
+    }
+    const currentUrl = parseCurrentUrl({
+      fullUrl: window.location.href,
+      originPath
+    });
 
     this.state = {
       initialPageload: true,
@@ -68,10 +69,12 @@ class Smoothr extends Component {
     }, 0);
 
     window.addEventListener('popstate', this.handlePopState);
+    window.addEventListener('hashchange', this.handleHashChange);
   }
 
   componentWillUnmount() {
     window.removeEventListener('popstate', this.handlePopState);
+    window.removeEventListener('hashchange', this.handleHashChange);
   }
 
   componentDidUpdate() {
@@ -102,8 +105,18 @@ class Smoothr extends Component {
   }
 
   handlePopState = e => {
-    const backNavigation = e.state.pageNavigated < this.state.pageNavigated;
-    this.handleRouteChange(e.state.url, backNavigation);
+    if (e.state) {
+      const backNavigation = e.state.pageNavigated < this.state.pageNavigated;
+      this.handleRouteChange(e.state.url, backNavigation);
+    }
+  };
+
+  handleHashChange = e => {
+    const incomingUrl = parseCurrentUrl({
+      fullUrl: window.location.href,
+      originPath: this.state.originPath
+    });
+    this.handleRouteChange(incomingUrl);
   };
 
   handleRouteChange = (

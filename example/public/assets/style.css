@@ -102,10 +102,10 @@ a {
 a[data-smoothr-current-link="true"] {
   opacity: 0.5;
 }
-a[href='/smoothr-demo/color/255/209/102'] {
+.yellow-link {
   color: rgb(255, 209, 102);
 }
-a[href='/smoothr-demo/color/117/219/205'] {
+.turquoise-link {
   color: rgb(117, 219, 205);
 }
 /* Main page content */

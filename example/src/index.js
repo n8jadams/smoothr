@@ -76,6 +76,7 @@ export default class App extends React.Component {
           originPath is the path after the domain to the origin of this single page app.
           Include the beginning backslash, but not the trailing backslash.
           All of the <Link /> href properties will be relative to that origin path.
+          For hash routing, set this to "/#" or something else ending with a hash, and that's it!
           Example: "/smoothr-app", and <Link href="/page1" /> will link to "/smoothr-app/page1".
           This defaults to an empty string, which signifies the document root.
         */
@@ -109,8 +110,8 @@ export default class App extends React.Component {
                   to simulate the css `:visited` rule.
                 */}
                 <Link href="/">Home</Link>
-                <Link href="/color/255/209/102">Yellow</Link>
-                <Link href="/color/117/219/205">Turquoise</Link>
+                <Link href="/color/255/209/102" className="yellow-link">Yellow</Link>
+                <Link href="/color/117/219/205" className="turquoise-link">Turquoise</Link>
                 <Link href="/smoothie">Smoothie</Link>
                 {/* This will redirect to the set `notFound` url */}
                 <Link href="/show404page">Invalid Link</Link>

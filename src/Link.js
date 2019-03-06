@@ -11,6 +11,7 @@ function Link(props) {
           fuzzyCurrent,
           fuzzyVisited,
           onClick,
+          children,
           ...otherProps
         } = props;
         let {
@@ -65,7 +66,7 @@ function Link(props) {
             data-smoothr-visited-link={visited}
             {...otherProps}
           >
-            {props.children}
+            {children}
           </a>
         );
       }}
