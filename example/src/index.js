@@ -80,7 +80,7 @@ export default class App extends React.Component {
           Example: "/smoothr-app", and <Link href="/page1" /> will link to "/smoothr-app/page1".
           This defaults to an empty string, which signifies the document root.
         */
-        originPath="/smoothr-demo"
+        originPath=""
         configAnimationSetDuration={this.configAnimationSetDuration}
         onAnimationStart={this.onAnimationStart}
         onAnimationEnd={this.onAnimationEnd}
