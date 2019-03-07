@@ -260,6 +260,7 @@ class Smoothr extends Component {
                 }
                 this.animationTimeout = setTimeout(() => {
                   this.handleAfterTransition(cleanNewUrl);
+                  clearTimeout(this.animationTimeout);
                 }, duration);
               }
             );
