@@ -235,6 +235,7 @@ class Smoothr extends Component {
               state => {
                 if (state.newUrl) {
                   interrupted = true;
+                  clearTimeout(this.animationTimeout);
                   return {
                     newUrl: null,
                     currentUrl: cleanNewUrl,
@@ -254,13 +255,12 @@ class Smoothr extends Component {
               },
               () => {
                 if (interrupted) {
-                  clearTimeout(this.animationTimeout);
                   this.props.onAnimationEnd();
-                } else {
-                  this.animationTimeout = setTimeout(() => {
-                    this.handleAfterTransition(cleanNewUrl);
-                  }, duration);
+                  return;
                 }
+                this.animationTimeout = setTimeout(() => {
+                  this.handleAfterTransition(cleanNewUrl);
+                }, duration);
               }
             );
           }

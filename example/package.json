@@ -21,6 +21,5 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ],
-  "homepage": "https://n8jadams.github.io/smoothr-demo"
+  ]
 }

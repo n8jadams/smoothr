@@ -6,7 +6,14 @@ A custom React router that leverages the Web Animations API and CSS animations.
 
 ![Smoothr Logo](assets/big-logo.png)
 
-## Background
+## Features
+- [x] Built with animating route transitions in mind
+- [x] Use of the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) or CSS classes to animate
+- [x] Route and animate multiple sections of the page
+- [x] Hash Routing
+- [x] Minimal Polyfilling necessary (Just `Object.assign`, `Promise` and possibly [`Element.animate`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate), for IE11 and newer)
+
+## Backstory
 In my experience from using animations with React Router and other Single Page App routing solutions, the work to add animation transitions on changing routes was a lot more complicated than just regular routing. I also was inspired by the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) and decided to create my own flavor of a Router, that treats animations as first class citizens.
 
 Anyway, thanks for checking this library out. If you end up using Smoothr in production, let me know and I'll add a link here in the README. 
@@ -18,7 +25,7 @@ May your single page routing animations be smoother, with Smoothr... (pardon the
 ### Prerequisites
 
 * React 16.3.0 or higher
-* Support for `Promise` in Javascript
+* Support for `Object.assign` and `Promise` in Javascript
 * Any necessary polyfills for the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) (I prefer [this one](https://github.com/wnda/web-animations-api-shiv), but you may need [this one](https://github.com/web-animations/web-animations-js).)
 
 ### Installation
@@ -214,10 +221,10 @@ a[data-smoothr-visited-link="true"] {
 - [x] Test on Chrome, Firefox, Safari, and IE11 (if it works in IE11 it should work on Edge... right? 😂)
 - [x] Handle visited links and current links better
 - [x] Remove glitchiness around interrupted animations
-- [ ] Add hash routing
+- [x] Add hash routing
 - [ ] Add prop checks with `PropTypes`
 - [ ] Test app in Preact/add Preact support
-- [ ] Remove need to polyfill `Promise`?
+- [ ] Remove need to polyfill `Object.assign` and possibly `Promise`
 - [ ] General cleanup and optimizations
 - [ ] Add more animations to the demo page
 
@@ -231,8 +238,8 @@ You can set up your development environment and use the example app as a test ap
 ```
 $ git clone https://github.com/n8jadams/smoothr.git
 $ cd smoothr
-$ npm install
-$ npm run build
+$ yarn install
+$ yarn build
 $ cd example
 $ yarn install
 $ yarn start
@@ -240,7 +247,7 @@ $ yarn start
 
 and then when you want to reload the package, from the `smoothr` directory
 ```
-$ npm run build
+$ yarn build
 ```
 
 It may take a while to download the dev dependencies.
