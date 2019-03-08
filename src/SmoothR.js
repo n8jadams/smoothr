@@ -194,88 +194,88 @@ class Smoothr extends Component {
         pushLSArray(LS_KEYS.VISITED_ROUTE_LIST, outgoingRoute, true);
       }
     }
-    this.setState(newStateObj, () => {
-      // Handle initial pageload without animating
-      if (this.state.initialPageload) {
-        window.history.replaceState(
-          { url: incomingUrl, pageNavigated: this.state.pageNavigated },
-          '',
-          `${this.state.originPath}${incomingUrl}`
-        );
+    // Handle initial pageload without animating
+    if (this.state.initialPageload) {
+      window.history.replaceState(
+        { url: incomingUrl, pageNavigated: this.state.pageNavigated },
+        '',
+        `${this.state.originPath}${incomingUrl}`
+      );
+      this.props.onAnimationStart({
+        initialPageload: true
+      });
+      this.setState({
+        initialPageload: false,
+        currentUrl: cleanNewUrl
+      });
+    } else {
+      // Configure the animation (or lack thereof)
+      let duration = 0;
+      new Promise(resolve => {
+        duration = this.props.configAnimationSetDuration({
+          outgoingUrl,
+          incomingUrl,
+          outgoingRoute,
+          incomingRoute,
+          backNavigation
+        });
+        duration = !newUrlIsFound ? 0 : duration;
+        resolve();
+      }).then(() => {
         this.props.onAnimationStart({
-          initialPageload: true
+          initialPageload: false
         });
-        this.setState({
-          initialPageload: false,
-          currentUrl: cleanNewUrl
-        });
-      } else {
-        // Configure the animation (or lack thereof)
-        let duration = 0;
-        new Promise(resolve => {
-          duration = this.props.configAnimationSetDuration({
-            outgoingUrl,
-            incomingUrl,
-            outgoingRoute,
-            incomingRoute,
-            backNavigation
-          });
-          duration = !newUrlIsFound ? 0 : duration;
-          resolve();
-        }).then(() => {
-          this.props.onAnimationStart({
-            initialPageload: false
-          });
-          if (!duration || duration < 1) {
-            this.handleAfterTransition(cleanNewUrl);
-          } else {
-            // Execute the animation
-            let interrupted = false;
-            this.setState(
-              state => {
-                if (state.newUrl) {
-                  interrupted = true;
-                  clearTimeout(this.animationTimeout);
-                  return {
-                    newUrl: null,
-                    currentUrl: cleanNewUrl,
-                    pageNavigated: backNavigation
-                      ? this.state.pageNavigated - 1
-                      : this.state.pageNavigated + 1,
-                    backNavigation: false
-                  };
-                }
+        if (!duration || duration < 1) {
+          this.handleAfterTransition(cleanNewUrl);
+        } else {
+          // Execute the animation
+          let interrupted = false;
+          this.setState(
+            state => {
+              if (state.newUrl) {
+                interrupted = true;
+                clearTimeout(this.animationTimeout);
                 return {
-                  newUrl: cleanNewUrl,
+                  newUrl: null,
+                  currentUrl: cleanNewUrl,
                   pageNavigated: backNavigation
                     ? this.state.pageNavigated - 1
                     : this.state.pageNavigated + 1,
-                  backNavigation
+                  backNavigation: false
                 };
-              },
-              () => {
-                if (interrupted) {
-                  this.props.onAnimationEnd();
-                  return;
-                }
-                this.animationTimeout = setTimeout(() => {
-                  this.handleAfterTransition(cleanNewUrl);
-                  clearTimeout(this.animationTimeout);
-                }, duration);
               }
-            );
-          }
-        });
-      }
-    });
+              return {
+                newUrl: cleanNewUrl,
+                pageNavigated: backNavigation
+                  ? this.state.pageNavigated - 1
+                  : this.state.pageNavigated + 1,
+                backNavigation
+              };
+            },
+            () => {
+              if (interrupted) {
+                this.props.onAnimationEnd();
+                return;
+              }
+              this.animationTimeout = setTimeout(() => {
+                this.handleAfterTransition(cleanNewUrl);
+              }, duration);
+            }
+          );
+        }
+      });
+    }
   };
 
   handleAfterTransition = cleanNewUrl => {
     this.setState(
-      {
-        currentUrl: cleanNewUrl,
-        newUrl: null,
-        backNavigation: false
+      () => {
+        clearTimeout(this.animationTimeout);
+        return {
+          currentUrl: cleanNewUrl,
+          newUrl: null,
+          backNavigation: false
+        };
       },
       () => {
         this.props.onAnimationEnd();

@@ -28,13 +28,15 @@ function assignPathProps(pathRegexp, pathKeys, path, props) {
   );
 }
 
-const SmoothRoutes = props => (
-  <SmoothRContext.Consumer>
-    {context => <RenderComponent {...props} context={context} />}
-  </SmoothRContext.Consumer>
-);
+function SmoothRoutes(props) {
+  return (
+    <SmoothRContext.Consumer>
+      {context => <SmoothRoutesRender {...props} context={context} />}
+    </SmoothRContext.Consumer>
+  );
+}
 
-class RenderComponent extends Component {
+class SmoothRoutesRender extends Component {
   constructor(props) {
     super(props);
 
@@ -51,16 +53,16 @@ class RenderComponent extends Component {
       } else if (c.props.notFound) {
         (console.error || console.log)(
           'The `path` on the <Route /> with the `notFound` attribute cannot have any URL variables.'
-          );
-          return;
-        }
+        );
+        return;
+      }
       const path = c.props.path.replace(/\?(.*)|\#(.*)/, '');
       let routeObj = {
         path: path,
-        pathRegexp: pathToRegexp(path),
+        pathRegexp: pathToRegexp(path)
       };
       // Optionally add the pathMask prop
-      if(c.props.path.indexOf(':') !== -1 && c.props.pathMask) {
+      if (c.props.path.indexOf(':') !== -1 && c.props.pathMask) {
         routeObj.pathMask = c.props.pathMask;
       }
       routeConsts.push(routeObj);
@@ -69,14 +71,14 @@ class RenderComponent extends Component {
   }
 
   render() {
-    let { 
-      context, 
-      animationIn, 
-      animationOut, 
-      animationOpts, 
-      reverseAnimationIn, 
-      reverseAnimationOut, 
-      reverseAnimationOpts 
+    let {
+      context,
+      animationIn,
+      animationOut,
+      animationOpts,
+      reverseAnimationIn,
+      reverseAnimationOut,
+      reverseAnimationOpts
     } = this.props;
     let { newUrl, currentUrl } = context.state;
 
@@ -85,23 +87,32 @@ class RenderComponent extends Component {
     let NotFoundPageComponent = () => null;
     let newPageClass = null;
     let newPageProps = {};
+    let newPageKey = null;
     let currentPageClass = null;
     let currentPageProps = {};
     let currentPageFound = false;
+    let currentPageKey = null;
     this.props.children.forEach(route => {
       const pathKeys = [];
-      const pathAsRegexp = pathToRegexp(route.props.path.replace(/\?(.*)|\#(.*)/, ''), pathKeys);
+      const pathAsRegexp = pathToRegexp(
+        route.props.path.replace(/\?(.*)|\#(.*)/, ''),
+        pathKeys
+      );
       // Set the animation, use the <Route> prop, and the <SmoothRoutes> prop if not set.
       const usedAnimationIn = route.props.animationIn || animationIn;
       const usedAnimationOut = route.props.animationOut || animationOut;
       const usedAnimationOpts = route.props.animationOpts || animationOpts;
-      const usedReverseAnimationIn = route.props.reverseAnimationIn || reverseAnimationIn;
-      const usedReverseAnimationOut = route.props.reverseAnimationOut || reverseAnimationOut;
-      const usedReverseAnimationOpts = route.props.reverseAnimationOpts || reverseAnimationOpts;
+      const usedReverseAnimationIn =
+        route.props.reverseAnimationIn || reverseAnimationIn;
+      const usedReverseAnimationOut =
+        route.props.reverseAnimationOut || reverseAnimationOut;
+      const usedReverseAnimationOpts =
+        route.props.reverseAnimationOpts || reverseAnimationOpts;
       if (newUrl && RegExp(pathAsRegexp).test(newUrl)) {
         assignUserSetProps(route.props, newPageProps);
         assignPathProps(pathAsRegexp, pathKeys, newUrl, newPageProps);
         NewPageComponent = route.props.component;
+        newPageKey = `${this.groupHash}-${newUrl}`;
         context.setRouteGroupVar(
           this.groupHash,
           'animationIn',
@@ -142,6 +153,7 @@ class RenderComponent extends Component {
         assignPathProps(pathAsRegexp, pathKeys, currentUrl, currentPageProps);
         currentPageFound = true;
         CurrentPageComponent = route.props.component;
+        currentPageKey = `${this.groupHash}-${currentUrl}`;
       }
       if (route.props.notFound) {
         NotFoundPageComponent = route.props.component;
@@ -158,6 +170,8 @@ class RenderComponent extends Component {
       position: 'absolute'
     };
 
+    console.log({newPageKey, currentPageKey});
+
     return newUrl ? (
       <div style={containerStyles}>
         <div
@@ -165,7 +179,7 @@ class RenderComponent extends Component {
           className={newPageClass}
           ref={el => context.setRouteGroupVar(this.groupHash, 'newPageRef', el)}
         >
-          <NewPageComponent {...newPageProps} />
+          <NewPageComponent {...newPageProps} key={newPageKey} />
         </div>
         <div
           style={containerStyles}
@@ -174,11 +188,11 @@ class RenderComponent extends Component {
             context.setRouteGroupVar(this.groupHash, 'currentPageRef', el)
           }
         >
-          <CurrentPageComponent {...currentPageProps} />
+          <CurrentPageComponent {...currentPageProps} key={currentPageKey} />
         </div>
       </div>
     ) : (
-      <CurrentPageComponent {...currentPageProps} />
+      <CurrentPageComponent {...currentPageProps} key={currentPageKey} />
     );
   }
 }
