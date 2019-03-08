@@ -101,7 +101,7 @@ class Smoothr extends Component {
           }
         }
       });
-    }, 0);
+    }, 1);
   }
 
   handlePopState = e => {
@@ -259,7 +259,7 @@ class Smoothr extends Component {
               }
               this.animationTimeout = setTimeout(() => {
                 this.handleAfterTransition(cleanNewUrl);
-              }, duration);
+              }, duration + 1);
             }
           );
         }
