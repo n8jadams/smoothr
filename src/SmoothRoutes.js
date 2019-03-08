@@ -170,8 +170,6 @@ class SmoothRoutesRender extends Component {
       position: 'absolute'
     };
 
-    console.log({newPageKey, currentPageKey});
-
     return newUrl ? (
       <div style={containerStyles}>
         <div
