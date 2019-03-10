@@ -8,7 +8,7 @@ A custom React router that leverages the Web Animations API and CSS animations.
 
 ## Features
 - [x] Built with animating route transitions in mind
-- [x] Use of the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) or CSS classes to animate
+- [x] Use the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) or CSS classes to animate
 - [x] Route and animate multiple sections of the page
 - [x] Hash Routing
 - [x] Minimal Polyfilling necessary (Just `Object.assign()`, `Promise` and possibly [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate), for IE11 and newer)
