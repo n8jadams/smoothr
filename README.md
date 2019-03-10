@@ -218,8 +218,6 @@ a[data-smoothr-visited-link="true"] {
 ## Known bugs/oddities
 * When using large SVG images within routed sections, on desktop Safari and mobile browsers the SVG images will "blink". This can be avoided by using bitmap-based images instead of vector-based ones. See [Issue #8](https://github.com/n8jadams/smoothr/issues/8).
 
-The source of these bugs is unknown.
-
 ## To do list before version 1.0.0:
 - [x] Release initial build to NPM
 - [x] Add ability to validate and mask URL variables on navigation
