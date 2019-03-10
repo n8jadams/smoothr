@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Home, Color, Smoothie, NotFound, Overlay } from './components/Routes';
 import { Options } from './components/Options';
 import { generateRandomColor } from './utils/generateRandomColor';
-import SmoothrLogo from './assets/images/small-logo.svg';
+import SmoothrLogo from './assets/images/small-logo.png';
 
 // Import the smoothr packages!
 import { Smoothr, SmoothRoutes, Route, Link } from 'smoothr';
