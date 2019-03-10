@@ -216,8 +216,7 @@ a[data-smoothr-visited-link="true"] {
 * Any other props that are set will be passed down to the rendered anchor tag.
 
 ## Known bugs/oddities
-1. Images and SVGs used in `<Route>` components sometimes "blink" on Desktop Safari at the beginning and end of transitions (renders). See [Issue #8](https://github.com/n8jadams/smoothr/issues/8).
-2. Similiar to the above issue, SVG's occasionally "blink" on IOS (and possibly Android? I'm not sure.) It is recommended to use Images over SVGs.
+* When using large SVG images within routed sections, on desktop Safari and mobile browsers the SVG images will "blink". This can be avoided by using bitmap-based images instead of vector-based ones. See [Issue #8](https://github.com/n8jadams/smoothr/issues/8).
 
 The source of these bugs is unknown.
 
