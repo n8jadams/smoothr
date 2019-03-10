@@ -11,10 +11,10 @@ A custom React router that leverages the Web Animations API and CSS animations.
 - [x] Use of the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) or CSS classes to animate
 - [x] Route and animate multiple sections of the page
 - [x] Hash Routing
-- [x] Minimal Polyfilling necessary (Just `Object.assign`, `Promise` and possibly [`Element.animate`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate), for IE11 and newer)
+- [x] Minimal Polyfilling necessary (Just `Object.assign()`, `Promise` and possibly [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate), for IE11 and newer)
 
 ## Backstory
-In my experience from using animations with React Router and other Single Page App routing solutions, the work to add animation transitions on changing routes was a lot more complicated than just regular routing. I also was inspired by the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) and decided to create my own flavor of a Router, that treats animations as first class citizens.
+In my experience of using animations with React Router and other Single Page App routing solutions, the work to add animation transitions on changing routes was a lot more complicated than just regular routing. I also was inspired by the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) and decided to create my own flavor of a Router, that treats animations as first class citizens.
 
 Anyway, thanks for checking this library out. If you end up using Smoothr in production, let me know and I'll add a link here in the README. 
 
@@ -25,7 +25,7 @@ May your single page routing animations be smoother, with Smoothr... (pardon the
 ### Prerequisites
 
 * React 16.3.0 or higher
-* Support for `Object.assign` and `Promise` in Javascript
+* Support for `Object.assign()` and `Promise` in Javascript
 * Any necessary polyfills for the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) (I prefer [this one](https://github.com/wnda/web-animations-api-shiv), but you may need [this one](https://github.com/web-animations/web-animations-js).)
 
 ### Installation
@@ -53,7 +53,7 @@ const App = () => (
     <div>
       {/* Link is our wrapper around anchors for Smoothr navigation  */}
       <Link href="/">Home</Link>
-      <Link href="/page1">Page 1</Link>
+      <Link href="/anotherpage">Another Page</Link>
     </div>
     <div>
       <SmoothRoutes>
