@@ -1,5 +1,5 @@
 import React from 'react';
-import SmoothieIcon from '../assets/images/small-logo.svg';
+import SmoothieIcon from '../assets/images/small-logo.png';
 
 function Home() {
   return (

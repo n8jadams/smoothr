@@ -215,6 +215,12 @@ a[data-smoothr-visited-link="true"] {
 * `fuzzyVisited` - _(No type, just add the props)_ - Similiar to the `fuzzyCurrent` prop, but related to visited links. If the user visits a Route with a matching variable pattern, the `data-smoothr-visited-link` property will be added.
 * Any other props that are set will be passed down to the rendered anchor tag.
 
+## Known bugs/oddities
+1. Images and SVGs used in `<Route>` components sometimes "blink" on Desktop Safari at the beginning and end of transitions (renders). See [Issue #8](https://github.com/n8jadams/smoothr/issues/8).
+2. Similiar to the above issue, SVG's occasionally "blink" on IOS (and possibly Android? I'm not sure.) It is recommended to use Images over SVGs.
+
+The source of these bugs is unknown.
+
 ## To do list before version 1.0.0:
 - [x] Release initial build to NPM
 - [x] Add ability to validate and mask URL variables on navigation
