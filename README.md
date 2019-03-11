@@ -94,7 +94,7 @@ const App = () => (
 ReactDOM.render(<App />, document.getElementById('root'));
 ```
 
-For a more complete example, check out [the demo](http://n8jadams.github.io/smoothr-demo) and its [source code](https://github.com/n8jadams/smoothr/blob/master/example/src/index.js) If you want to play around with this example, see the setup instructions in the [Contributing section](#contributing).
+For a more complete example, check out [the demo](https://smoothr.netlify.com) and its [source code](https://github.com/n8jadams/smoothr/blob/master/example/src/index.js) If you want to play around with this example, see the setup instructions in the [Contributing section](#contributing).
 
 ## API Documentation
 
