@@ -3,7 +3,7 @@ import React from 'react';
 function SmoothrIcon() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52.61 88.67">
-      <title>Asset 3</title>
+      <title>Smoothr Icon</title>
       <polygon
         points="1.73 22.6 48.42 22.75 48.78 30.8 45.82 31.3 42.26 87.71 7.74 87.51 4.23 31.3 1.1 30.82 1.73 22.6"
         style={{ fill: '#fffcf9' }}

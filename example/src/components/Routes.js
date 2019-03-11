@@ -28,8 +28,10 @@ function Color({ red, green, blue }) {
 function Smoothie() {
   return (
     <section>
-      <div className="smoothie-icon">
-        <SmoothrIcon />
+      <div>
+        <div className="smoothie-icon">
+          <SmoothrIcon />
+        </div>
       </div>
     </section>
   );
