@@ -216,7 +216,7 @@ a[data-smoothr-visited-link="true"] {
 * Any other props that are set will be passed down to the rendered anchor tag.
 
 ## Known bugs/oddities
-* When using large SVG images within routed sections, on desktop Safari and mobile browsers the SVG images will "blink". This can be avoided by using bitmap-based images instead of vector-based ones. See [Issue #8](https://github.com/n8jadams/smoothr/issues/8).
+* When using SVGs as the `src` attribute of an `<img>` tag, on desktop Safari and mobile browsers the image will "blink". This can be avoided by using rasterized image types or raw `<svg>` tags in your routed components. See [Issue #8](https://github.com/n8jadams/smoothr/issues/8).
 
 ## To do list before version 1.0.0:
 - [x] Release initial build to NPM

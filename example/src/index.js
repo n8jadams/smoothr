@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Home, Color, Smoothie, NotFound, Overlay } from './components/Routes';
 import { Options } from './components/Options';
 import { generateRandomColor } from './utils/generateRandomColor';
-import SmoothrLogo from './assets/images/small-logo.png';
+import { SmoothrIcon } from './components/SmoothrIcon';
 
 // Import the smoothr packages!
 import { Smoothr, SmoothRoutes, Route, Link } from 'smoothr';
@@ -44,7 +44,7 @@ export default class App extends React.Component {
     backNavigation
   }) => {
     // Disable all navigation during animation in this app
-    this.setState({animating: true});
+    this.setState({ animating: true });
 
     // Have this method return the duration of the animation as an int in milliseconds
     return incomingRoute === '/notfound' ? 0 : this.state.duration;
@@ -62,7 +62,7 @@ export default class App extends React.Component {
     Reset your animations, or do something else...
   */
   onAnimationEnd = () => {
-    this.setState({animating: false});
+    this.setState({ animating: false });
   };
 
   render() {
@@ -89,7 +89,9 @@ export default class App extends React.Component {
           <header>
             <h1>
               Smoothr
-              <img src={SmoothrLogo} className="smoothie-logo" alt="Smoothr Logo" />
+              <div className="smoothie-logo">
+                <SmoothrIcon />
+              </div>
               Demo
             </h1>
             <Options
@@ -110,8 +112,12 @@ export default class App extends React.Component {
                   to simulate the css `:visited` rule.
                 */}
                 <Link href="/">Home</Link>
-                <Link href="/color/255/209/102" className="yellow-link">Yellow</Link>
-                <Link href="/color/117/219/205" className="turquoise-link">Turquoise</Link>
+                <Link href="/color/255/209/102" className="yellow-link">
+                  Yellow
+                </Link>
+                <Link href="/color/117/219/205" className="turquoise-link">
+                  Turquoise
+                </Link>
                 <Link href="/smoothie">Smoothie</Link>
                 {/* This will redirect to the set `notFound` url */}
                 <Link href="/show404page">Invalid Link</Link>
@@ -174,11 +180,11 @@ export default class App extends React.Component {
                   `notFound` path will be used. This will only work if the `path` component
                   has variables.
                 */
-                pathMask={({red, green, blue}) => {
+                pathMask={({ red, green, blue }) => {
                   // Validate that they're all numbers
-                  if(isNaN(red) || isNaN(green) || isNaN(blue)) {
+                  if (isNaN(red) || isNaN(green) || isNaN(blue)) {
                     // Return anything else not matching the `path` pattern to trigger a 404
-                    return false; 
+                    return false;
                   }
                   // Make sure they're all valid RGB values
                   red = Math.min(Math.abs(parseInt(red)), 255);

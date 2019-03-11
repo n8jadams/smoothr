@@ -1,5 +1,5 @@
 import React from 'react';
-import SmoothieIcon from '../assets/images/small-logo.png';
+import { SmoothrIcon } from '../components/SmoothrIcon';
 
 function Home() {
   return (
@@ -13,7 +13,7 @@ function Home() {
   );
 }
 
-function Color({red, green, blue}) {
+function Color({ red, green, blue }) {
   return (
     <section>
       <div style={{ backgroundColor: `rgb(${red}, ${green}, ${blue})` }}>
@@ -28,8 +28,8 @@ function Color({red, green, blue}) {
 function Smoothie() {
   return (
     <section>
-      <div>
-        <img src={SmoothieIcon} alt="Smoothie" className="smoothie-icon" />
+      <div className="smoothie-icon">
+        <SmoothrIcon />
       </div>
     </section>
   );
@@ -48,9 +48,7 @@ function NotFound() {
 }
 
 function Overlay(props) {
-  return (
-    <div className="overlay" style={props.style} aria-hidden="true" />
-  );
+  return <div className="overlay" style={props.style} aria-hidden="true" />;
 }
 
 export { Home, Color, Smoothie, NotFound, Overlay };
