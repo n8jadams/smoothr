@@ -82,7 +82,8 @@ function Options(props) {
           <input
             type="number"
             onChange={e => 
-              props.setState({ duration: Math.abs(parseInt(e.target.value)) })}
+              props.setState({ duration: e.target.value !== '' ? Math.abs(parseInt(e.target.value)) : ''})
+            }
             value={props.duration}
             readOnly={props.animating}
           />

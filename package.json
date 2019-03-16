@@ -1,6 +1,6 @@
 {
   "name": "smoothr",
-  "version": "0.4.10",
+  "version": "0.4.11",
   "description": "Smoothr: Smooth Router - A custom React router that leverages the Web Animations API and CSS animations.",
   "keywords": [
     "react",

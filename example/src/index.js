@@ -47,7 +47,7 @@ export default class App extends React.Component {
     this.setState({ animating: true });
 
     // Have this method return the duration of the animation as an int in milliseconds
-    return incomingRoute === '/notfound' ? 0 : this.state.duration;
+    return incomingRoute === '/notfound' ? 0 : this.state.duration || 0;
   };
 
   /* 
