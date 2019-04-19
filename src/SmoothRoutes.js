@@ -61,9 +61,9 @@ class SmoothRoutesRender extends Component {
         path: path,
         pathRegexp: pathToRegexp(path)
       };
-      // Optionally add the pathMask prop
-      if (c.props.path.indexOf(':') !== -1 && c.props.pathMask) {
-        routeObj.pathMask = c.props.pathMask;
+      // Optionally add the pathResolve prop
+      if (c.props.path.indexOf(':') !== -1 && c.props.pathResolve) {
+        routeObj.pathResolve = c.props.pathResolve;
       }
       routeConsts.push(routeObj);
     });

@@ -1,28 +1,24 @@
 import React, { Component } from 'react';
 import { SmoothRContext } from './SmoothRContext';
-import { parseCurrentUrl } from './utils/parseCurrentUrl';
 import { extractPathVars } from './utils/extractPathVars';
 import { getLSArray, pushLSArray } from './utils/lsArray';
 import { LS_KEYS } from './consts/LS_KEYS';
+
 
 class Smoothr extends Component {
   constructor(props) {
     super(props);
 
-    // Use window.location.href to handle hash and set current url
-    let originPath = '';
+    // Set some class props
+    this.initialPageload = true;
+    this.originPath = '';
     if (props.originPath && props.originPath !== '/') {
-      originPath = props.originPath;
+      this.originPath = props.originPath;
     }
-    const currentUrl = parseCurrentUrl({
-      fullUrl: window.location.href,
-      originPath
-    });
+    this.routeVars = {};
 
     this.state = {
-      initialPageload: true,
-      originPath,
-      currentUrl,
+      currentUrl: this.prepWindowHrefForRouting(),
       newUrl: null,
       pageNavigated: 1,
       backNavigation: false,
@@ -32,8 +28,16 @@ class Smoothr extends Component {
       visitedUrls: getLSArray(LS_KEYS.VISITED_URL_LIST),
       visitedRoutes: getLSArray(LS_KEYS.VISITED_ROUTE_LIST)
     };
+  }
 
-    this.routeVars = {};
+  prepWindowHrefForRouting = () => {
+    let suffix = window.location.href.split('/');
+    suffix = `/${suffix.slice(3, suffix.length).join('/')}`;
+    let preppedUrl = suffix.split(this.originPath).join('') || '/';
+    if(`${preppedUrl}#` === this.originPath) {
+      preppedUrl = '/';
+    }
+    return preppedUrl;
   }
 
   setRouteConsts = (routeConsts, notFoundPath) => {
@@ -111,19 +115,12 @@ class Smoothr extends Component {
     }
   };
 
-  handleHashChange = e => {
-    const incomingUrl = parseCurrentUrl({
-      fullUrl: window.location.href,
-      originPath: this.state.originPath
-    });
+  handleHashChange = () => {
+    const incomingUrl = this.prepWindowHrefForRouting();
     this.handleRouteChange(incomingUrl);
   };
 
-  handleRouteChange = (
-    incomingUrl,
-    backNavigation = false,
-    linkNavigation = false
-  ) => {
+  resolveRoutes = (incomingUrl) => {
     // Remove query string and hash from new url
     let cleanNewUrl = incomingUrl.replace(/\?(.*)|\#(.*)/, '');
     let queryStringHash = incomingUrl.split(cleanNewUrl).join('');
@@ -138,16 +135,16 @@ class Smoothr extends Component {
       }
       // If it matches the new URL
       if (RegExp(routeObj.pathRegexp).test(cleanNewUrl)) {
-        // Handle pathMasking
-        if (routeObj.pathMask) {
+        // Handle pathResolving
+        if (routeObj.pathResolve) {
           const keyValObj = extractPathVars(routeObj.path, cleanNewUrl);
-          const maskedUrl = routeObj.pathMask(keyValObj);
+          const resolvedUrl = routeObj.pathResolve(keyValObj);
           if (
-            typeof maskedUrl === 'string' &&
-            RegExp(routeObj.pathRegexp).test(maskedUrl)
+            typeof resolvedUrl === 'string' &&
+            RegExp(routeObj.pathRegexp).test(resolvedUrl)
           ) {
-            cleanNewUrl = maskedUrl;
-            incomingUrl = `${maskedUrl}${queryStringHash}`;
+            cleanNewUrl = resolvedUrl;
+            incomingUrl = `${resolvedUrl}${queryStringHash}`;
             incomingRoute = routeObj.path;
             newUrlIsFound = true;
           }
@@ -169,6 +166,29 @@ class Smoothr extends Component {
       ? this.state.notFoundPath
       : this.state.currentUrl;
 
+    return {
+      cleanNewUrl,
+      incomingRoute,
+      incomingUrl,
+      outgoingRoute,
+      outgoingUrl
+    };
+  } 
+
+  handleRouteChange = (
+    url,
+    backNavigation = false,
+    linkNavigation = false
+  ) => {
+
+    let {
+      cleanNewUrl,
+      outgoingUrl,
+      incomingUrl,
+      outgoingRoute,
+      incomingRoute
+    } = this.resolveRoutes(url);
+
     // All incoming routes and URLs are set
     let newStateObj = {};
     if (linkNavigation) {
@@ -179,7 +199,7 @@ class Smoothr extends Component {
           pageNavigated: this.state.pageNavigated + 1
         },
         '',
-        `${this.state.originPath}${incomingUrl}`
+        `${this.originPath}${incomingUrl}`
       );
       // Push visited links to state and local storage
       if (this.state.visitedUrls.indexOf(outgoingUrl) === -1) {
@@ -195,20 +215,21 @@ class Smoothr extends Component {
       }
     }
     // Handle initial pageload without animating
-    if (this.state.initialPageload) {
+    if (this.initialPageload) {
+      this.initialPageload = false;
       window.history.replaceState(
         { url: incomingUrl, pageNavigated: this.state.pageNavigated },
         '',
-        `${this.state.originPath}${incomingUrl}`
+        `${this.originPath}${incomingUrl}`
       );
       this.props.onAnimationStart({
         initialPageload: true
       });
       this.setState({
-        initialPageload: false,
         currentUrl: cleanNewUrl
       });
     } else {
+      // TODO: Move all of this into componentDidUpdate
       // Configure the animation (or lack thereof)
       let duration = 0;
       new Promise(resolve => {
@@ -219,7 +240,7 @@ class Smoothr extends Component {
           incomingRoute,
           backNavigation
         });
-        duration = !newUrlIsFound ? 0 : duration;
+        // duration = !newUrlIsFound ? 0 : duration;
         resolve();
       }).then(() => {
         this.props.onAnimationStart({

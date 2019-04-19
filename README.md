@@ -162,12 +162,12 @@ Most of the actual animation configuration takes place on the `<Route>` level. A
 // If the url is "/users/12345", the following will be rendered:
 <UsersPage id="12345">
 ```
-* `pathMask` - _(function)_ - Use this function to validate and modify the variables passed when this `<Route>` is navigated to. The return value must match the pattern of the path. If it doesn't, the `notFound` path will be used. This will only work if the `path` component has variables. Example, which can by tested on the [live demo](https://smoothr.netlify.com):
+* `pathResolve` - _(function)_ - Use this function to validate and modify the variables passed when this `<Route>` is navigated to. The return value must match the pattern of the path. If it doesn't, the `notFound` path will be used. This will only work if the `path` component has variables. Example, which can by tested on the [live demo](https://smoothr.netlify.com):
 
 ```jsx
 <Route
   path="/color/:red/:green/:blue"
-  pathMask={({red, green, blue}) => {
+  pathResolve={({red, green, blue}) => {
     // Ensure they're all numeric
     if(isNaN(red) || isNaN(green) || isNaN(blue)) {
       // Return anything not matching the `path` pattern to trigger a 404

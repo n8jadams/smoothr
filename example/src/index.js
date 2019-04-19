@@ -180,7 +180,7 @@ export default class App extends React.Component {
                   `notFound` path will be used. This will only work if the `path` component
                   has variables.
                 */
-                pathMask={({ red, green, blue }) => {
+                pathResolve={({ red, green, blue }) => {
                   // Validate that they're all numbers
                   if (isNaN(red) || isNaN(green) || isNaN(blue)) {
                     // Return anything else not matching the `path` pattern to trigger a 404
