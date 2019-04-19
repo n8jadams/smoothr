@@ -33,7 +33,7 @@ export default class App extends React.Component {
     in order to conditionally set the upcoming animation.
     It is a Promise, so it will be completed before the animating begins.
   */
-  configAnimationSetDuration = ({
+  beforeAnimation = ({
     // Url's are the exact urls
     outgoingUrl,
     incomingUrl,
@@ -81,7 +81,7 @@ export default class App extends React.Component {
           This defaults to an empty string, which signifies the document root.
         */
         originPath=""
-        configAnimationSetDuration={this.configAnimationSetDuration}
+        beforeAnimation={this.beforeAnimation}
         onAnimationStart={this.onAnimationStart}
         onAnimationEnd={this.onAnimationEnd}
       >

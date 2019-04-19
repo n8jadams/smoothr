@@ -4,18 +4,23 @@ import { extractPathVars } from './utils/extractPathVars';
 import { getLSArray, pushLSArray } from './utils/lsArray';
 import { LS_KEYS } from './consts/LS_KEYS';
 
-
 class Smoothr extends Component {
   constructor(props) {
     super(props);
 
-    // Set some class props
+    // Set some class properties
     this.initialPageload = true;
     this.originPath = '';
     if (props.originPath && props.originPath !== '/') {
       this.originPath = props.originPath;
     }
     this.routeVars = {};
+
+    // DOM Animation class properties
+    this.domInAnimation = {};
+    this.domInAnimation.cancel = () => {};
+    this.domOutAnimation = {};
+    this.domOutAnimation.cancel = () => {};
 
     this.state = {
       currentUrl: this.prepWindowHrefForRouting(),
@@ -34,11 +39,11 @@ class Smoothr extends Component {
     let suffix = window.location.href.split('/');
     suffix = `/${suffix.slice(3, suffix.length).join('/')}`;
     let preppedUrl = suffix.split(this.originPath).join('') || '/';
-    if(`${preppedUrl}#` === this.originPath) {
+    if (`${preppedUrl}#` === this.originPath) {
       preppedUrl = '/';
     }
     return preppedUrl;
-  }
+  };
 
   setRouteConsts = (routeConsts, notFoundPath) => {
     function merge(a, b, prop) {
@@ -81,33 +86,6 @@ class Smoothr extends Component {
     window.removeEventListener('hashchange', this.handleHashChange);
   }
 
-  componentDidUpdate() {
-    // Debounce in order to get refs!
-    setTimeout(() => {
-      // Handle the route animations for each route group
-      Object.keys(this.routeVars).forEach(routeHash => {
-        let routeGroup = this.routeVars[routeHash];
-        if (this.state.newUrl) {
-          let inAnimation = routeGroup.animationIn;
-          let outAnimation = routeGroup.animationOut;
-          let opts = routeGroup.animationOpts;
-          // Determine if we use reverse animations
-          if (this.state.backNavigation) {
-            inAnimation = routeGroup.reverseAnimationIn || inAnimation;
-            outAnimation = routeGroup.reverseAnimationOut || outAnimation;
-            opts = routeGroup.reverseAnimationOpts || opts;
-          }
-          if (typeof inAnimation !== 'string' && routeGroup.newPageRef) {
-            routeGroup.newPageRef.animate(inAnimation, opts);
-          }
-          if (typeof outAnimation !== 'string' && routeGroup.currentPageRef) {
-            routeGroup.currentPageRef.animate(outAnimation, opts);
-          }
-        }
-      });
-    }, 1);
-  }
-
   handlePopState = e => {
     if (e.state) {
       const backNavigation = e.state.pageNavigated < this.state.pageNavigated;
@@ -120,7 +98,7 @@ class Smoothr extends Component {
     this.handleRouteChange(incomingUrl);
   };
 
-  resolveRoutes = (incomingUrl) => {
+  resolveRoutes = incomingUrl => {
     // Remove query string and hash from new url
     let cleanNewUrl = incomingUrl.replace(/\?(.*)|\#(.*)/, '');
     let queryStringHash = incomingUrl.split(cleanNewUrl).join('');
@@ -167,27 +145,24 @@ class Smoothr extends Component {
       : this.state.currentUrl;
 
     return {
-      cleanNewUrl,
       incomingRoute,
       incomingUrl,
       outgoingRoute,
       outgoingUrl
     };
-  } 
+  };
 
   handleRouteChange = (
-    url,
+    newRoute,
     backNavigation = false,
     linkNavigation = false
   ) => {
-
     let {
-      cleanNewUrl,
       outgoingUrl,
       incomingUrl,
       outgoingRoute,
       incomingRoute
-    } = this.resolveRoutes(url);
+    } = this.resolveRoutes(newRoute);
 
     // All incoming routes and URLs are set
     let newStateObj = {};
@@ -222,87 +197,136 @@ class Smoothr extends Component {
         '',
         `${this.originPath}${incomingUrl}`
       );
-      this.props.onAnimationStart({
-        initialPageload: true
-      });
       this.setState({
-        currentUrl: cleanNewUrl
+        currentUrl: incomingUrl
       });
     } else {
-      // TODO: Move all of this into componentDidUpdate
-      // Configure the animation (or lack thereof)
-      let duration = 0;
+      // Kick off the animation
       new Promise(resolve => {
-        duration = this.props.configAnimationSetDuration({
+        this.props.beforeAnimation({
           outgoingUrl,
           incomingUrl,
           outgoingRoute,
           incomingRoute,
           backNavigation
         });
-        // duration = !newUrlIsFound ? 0 : duration;
         resolve();
       }).then(() => {
         this.props.onAnimationStart({
           initialPageload: false
         });
-        if (!duration || duration < 1) {
-          this.handleAfterTransition(cleanNewUrl);
-        } else {
-          // Execute the animation
-          let interrupted = false;
-          this.setState(
-            state => {
-              if (state.newUrl) {
-                interrupted = true;
-                clearTimeout(this.animationTimeout);
-                return {
-                  newUrl: null,
-                  currentUrl: cleanNewUrl,
-                  pageNavigated: backNavigation
-                    ? this.state.pageNavigated - 1
-                    : this.state.pageNavigated + 1,
-                  backNavigation: false
-                };
-              }
-              return {
-                newUrl: cleanNewUrl,
-                pageNavigated: backNavigation
-                  ? this.state.pageNavigated - 1
-                  : this.state.pageNavigated + 1,
-                backNavigation
-              };
-            },
-            () => {
-              if (interrupted) {
-                this.props.onAnimationEnd();
-                return;
-              }
-              this.animationTimeout = setTimeout(() => {
-                this.handleAfterTransition(cleanNewUrl);
-              }, Math.max(0, duration - 2));
-            }
-          );
-        }
+        // Execute the animation in state
+        let interrupted = false;
+        this.setState(state => {
+          const pageNavigated = backNavigation
+            ? state.pageNavigated - 1
+            : state.pageNavigated + 1;
+          if (state.newUrl) {
+            // Interupted animation. End animation.
+            interrupted = true;
+            clearTimeout(this.animationTimeout);
+            this.domInAnimation.cancel();
+            this.domOutAnimation.cancel();
+            return {
+              newUrl: null,
+              currentUrl: incomingUrl,
+              pageNavigated,
+              backNavigation: false
+            };
+          }
+          // Start animation
+          return {
+            newUrl: incomingUrl,
+            pageNavigated,
+            backNavigation
+          };
+        }, () => {
+          if(interrupted) {
+            this.domInAnimation.cancel = () => {};
+            this.domOutAnimation.cancel = () => {};
+            this.props.onAnimationEnd();
+          }
+        });
       });
     }
   };
 
-  handleAfterTransition = cleanNewUrl => {
-    this.setState(
-      () => {
-        clearTimeout(this.animationTimeout);
-        return {
-          currentUrl: cleanNewUrl,
-          newUrl: null,
-          backNavigation: false
-        };
-      },
-      () => {
-        this.props.onAnimationEnd();
-      }
-    );
-  };
+  componentDidUpdate() {
+    const endRouteChange = () => {
+      this.setState(
+        state => {
+          if(state.newUrl) {
+            return {
+              newUrl: null,
+              currentUrl: state.newUrl,
+              pageNavigated: state.backNavigation
+                ? state.pageNavigated - 1
+                : state.pageNavigated + 1,
+              backNavigation: false
+            };
+          }
+          return null;
+        },
+        () => {
+          this.domInAnimation.cancel = () => {};
+          this.domOutAnimation.cancel = () => {};
+          this.props.onAnimationEnd();
+        }
+      );
+    };
+
+    // If an animation just started, execute animation in the DOM
+    if (this.state.newUrl) {
+      // Clear out any timeout that may have been interrupted
+      clearTimeout(this.animationTimeout);
+      this.domInAnimation.cancel();
+      this.domOutAnimation.cancel();
+
+      // Execute the route animations for each route group
+      Object.keys(this.routeVars).forEach(routeHash => {
+        let routeGroup = this.routeVars[routeHash];
+
+        let inAnimation = routeGroup.animationIn;
+        let outAnimation = routeGroup.animationOut;
+        let opts = routeGroup.animationOpts;
+        let duration = Math.max(
+          0,
+          typeof opts === 'number' ? opts : opts.duration
+        );
+        // Determine if we use reverse animations
+        if (this.state.backNavigation) {
+          inAnimation = routeGroup.reverseAnimationIn || inAnimation;
+          outAnimation = routeGroup.reverseAnimationOut || outAnimation;
+          opts = routeGroup.reverseAnimationOpts || opts;
+        }
+        if (typeof inAnimation !== 'string' && routeGroup.newPageRef) {
+          this.domInAnimation = routeGroup.newPageRef.animate(
+            inAnimation,
+            opts
+          );
+          this.domInAnimation.onfinish = endRouteChange;
+          this.domInAnimation.oncancel = endRouteChange;
+          this.domInAnimation.play();
+        }
+        if (typeof outAnimation !== 'string' && routeGroup.currentPageRef) {
+          this.domOutAnimation = routeGroup.currentPageRef.animate(
+            outAnimation,
+            opts
+          );
+          this.domOutAnimation.onfinish = endRouteChange;
+          this.domOutAnimation.oncancel = endRouteChange;
+          this.domOutAnimation.play();
+        }
+        // If both of the animations are classNames, use a timeout
+        if (
+          typeof inAnimation === 'string' &&
+          typeof outAnimation === 'string'
+        ) {
+          this.animationTimeout = setTimeout(endRouteChange, duration);
+        }
+      });
+    }
+  }
 
   render() {
     return (
