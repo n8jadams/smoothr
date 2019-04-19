@@ -144,8 +144,8 @@ class SmoothRoutesRender extends Component {
           usedReverseAnimationOpts
         );
         if (typeof route.props.animationIn === 'string') {
-          newPageClass += ' ' + usedAnimationIn;
-          currentPageClass += ' ' + usedAnimationOut;
+          newPageClass = !context.state.backNavigation ? usedAnimationIn : usedReverseAnimationIn;
+          currentPageClass = !context.state.backNavigation ? usedAnimationOut : usedReverseAnimationOut;
         }
       }
       if (RegExp(pathAsRegexp).test(currentUrl)) {

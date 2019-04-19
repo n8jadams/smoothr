@@ -1,7 +1,7 @@
 import React from 'react';
 
 const animations = {
-  Fade: {
+  'Fade (JS)': {
     in: [
       { opacity: 0 },
       { opacity: 1 }
@@ -13,7 +13,7 @@ const animations = {
     reverseIn: null,
     reverseOut: null
   },
-  'Slide Right': {
+  'Slide Right (JS)': {
     in: [
       { transform: 'translate3d(100%, 0, 0)' },
       { transform: 'translate3d(0, 0, 0)' }
@@ -30,6 +30,15 @@ const animations = {
       { transform: 'translate3d(0, 0, 0)' },
       { transform: 'translate3d(100%, 0, 0)' }
     ]
+  },
+  'Slide Up (CSS)': {
+    cssAnimation: true,
+    forceDuration: 750,
+    forceEasing: 'ease-in-out',
+    in: 'slideUpIn',
+    out: 'slideUpOut',
+    reverseIn: 'slideUpReverseIn',
+    reverseOut: 'slideUpReverseOut'
   }
 };
 
@@ -60,13 +69,20 @@ function Options(props) {
             value={props.animation}
             onChange={e => {
               const animation = animations[e.target.value];
-              props.setState({
+              let newState = {
                 animation: e.target.value,
                 animationIn: animation.in,
                 animationOut: animation.out,
                 reverseAnimationIn: animation.reverseIn,
-                reverseAnimationOut: animation.reverseOut
-              });
+                reverseAnimationOut: animation.reverseOut,
+                cssAnimation: false
+              };
+              if(animation.cssAnimation) {
+                newState.cssAnimation = true;
+                newState.duration = animation.forceDuration;
+                newState.easing = animation.forceEasing;
+              }
+              props.setState(newState);
             }}
             readOnly={props.animating}
           >
@@ -86,6 +102,7 @@ function Options(props) {
             }
             value={props.duration}
             readOnly={props.animating}
+            disabled={props.cssAnimation}
           />
         </label>
         <label>
@@ -98,6 +115,7 @@ function Options(props) {
               })
             }
             readOnly={props.animating}
+            disabled={props.cssAnimation}
           >
             {easingOptions.map((opt, i) => (
               <option key={i} value={opt}>

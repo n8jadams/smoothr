@@ -25,6 +25,7 @@ export default class App extends React.Component {
     reverseAnimationIn: null,
     reverseAnimationOut: null,
     duration: 750,
+    cssAnimation: false,
     easing: 'ease-in-out'
   };
 
@@ -45,9 +46,6 @@ export default class App extends React.Component {
   }) => {
     // Disable all navigation during animation in this app
     this.setState({ animating: true });
-
-    // Have this method return the duration of the animation as an int in milliseconds
-    return incomingRoute === '/notfound' ? 0 : this.state.duration || 0;
   };
 
   /* 
@@ -55,7 +53,7 @@ export default class App extends React.Component {
     Use it to imperitively kick off transition animations,
     including on the initial page load, which is passed in as a bool.
   */
-  onAnimationStart = ({ initialPageload }) => {};
+  onAnimationStart = () => {};
 
   /*
     This takes place after the animation is finished.
@@ -98,8 +96,9 @@ export default class App extends React.Component {
               setState={newState => this.setState(newState)}
               showOverlay={this.state.showOverlay}
               animation={this.state.animation}
-              duration={this.state.duration}
               easing={this.state.easing}
+              duration={this.state.duration}
+              cssAnimation={this.state.cssAnimation}
               animating={this.state.animating}
             />
             <div className="links-container">
