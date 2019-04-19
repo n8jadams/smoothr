@@ -125,7 +125,7 @@ beforeAnimation = ({
 
 * `onAnimationEnd` - _(function)_ - This takes place after the animation is finished. Reset your animations if they're saved in state, or do something else. There are no arguments passed. Note that this will not run on an interrupted animation (if the user navigates too quickly for the animation to complete.)
 
-* `originPath` - _(string)_ - The path after the domain to the origin of this single page app. Include the beginning backslash, but not the trailing backslash. All of the `<Link>` `href` properties will be relative to that origin path. For hash routing, set this to `"/#"` or something else ending with a hash (`#`), and that's it! Example: `"/smoothr-app"`, and `<Link href="/page1" />` will link to `"/smoothr-app/page1"`. This defaults to an empty string, which signifies the document root.
+* `originPath` - _(string)_ - The path after the domain to the origin of this single page app, including the beginning backslash, but not the trailing backslash. This will be set once and cannot be updated. All of the `<Link>` `href` properties will be relative to that origin path. For hash routing, set this to `"/#"` or something else ending with a hash (`#`), and that's it! Example: `"/smoothr-app"`, and `<Link href="/page1" />` will link to `"/smoothr-app/page1"`. This defaults to an empty string, which signifies the document root.
 
 ### `<SmoothRoutes>`
 

@@ -198,7 +198,8 @@ class Smoothr extends Component {
         `${this.originPath}${incomingUrl}`
       );
       this.setState({
-        currentUrl: incomingUrl
+        ...newStateObj,
+        currentUrl: incomingUrl,
       });
     } else {
       // Kick off the animation
@@ -228,6 +229,7 @@ class Smoothr extends Component {
             this.domInAnimation.cancel();
             this.domOutAnimation.cancel();
             return {
+              ...newStateObj,
               newUrl: null,
               currentUrl: incomingUrl,
               pageNavigated,
@@ -236,6 +238,7 @@ class Smoothr extends Component {
           }
           // Start animation
           return {
+            ...newStateObj,
             newUrl: incomingUrl,
             pageNavigated,
             backNavigation
@@ -332,6 +335,7 @@ class Smoothr extends Component {
     return (
       <SmoothRContext.Provider
         value={{
+          originPath: this.originPath,
           state: this.state,
           handleRouteChange: this.handleRouteChange,
           setRouteConsts: this.setRouteConsts,
