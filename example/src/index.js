@@ -25,6 +25,7 @@ export default class App extends React.Component {
     reverseAnimationIn: null,
     reverseAnimationOut: null,
     duration: 750,
+    cssAnimation: false,
     easing: 'ease-in-out'
   };
 
@@ -33,7 +34,7 @@ export default class App extends React.Component {
     in order to conditionally set the upcoming animation.
     It is a Promise, so it will be completed before the animating begins.
   */
-  configAnimationSetDuration = ({
+  beforeAnimation = ({
     // Url's are the exact urls
     outgoingUrl,
     incomingUrl,
@@ -45,9 +46,6 @@ export default class App extends React.Component {
   }) => {
     // Disable all navigation during animation in this app
     this.setState({ animating: true });
-
-    // Have this method return the duration of the animation as an int in milliseconds
-    return incomingRoute === '/notfound' ? 0 : this.state.duration || 0;
   };
 
   /* 
@@ -55,7 +53,7 @@ export default class App extends React.Component {
     Use it to imperitively kick off transition animations,
     including on the initial page load, which is passed in as a bool.
   */
-  onAnimationStart = ({ initialPageload }) => {};
+  onAnimationStart = () => {};
 
   /*
     This takes place after the animation is finished.
@@ -80,8 +78,8 @@ export default class App extends React.Component {
           Example: "/smoothr-app", and <Link href="/page1" /> will link to "/smoothr-app/page1".
           This defaults to an empty string, which signifies the document root.
         */
-        originPath=""
-        configAnimationSetDuration={this.configAnimationSetDuration}
+        originPath="/"
+        beforeAnimation={this.beforeAnimation}
         onAnimationStart={this.onAnimationStart}
         onAnimationEnd={this.onAnimationEnd}
       >
@@ -98,8 +96,9 @@ export default class App extends React.Component {
               setState={newState => this.setState(newState)}
               showOverlay={this.state.showOverlay}
               animation={this.state.animation}
-              duration={this.state.duration}
               easing={this.state.easing}
+              duration={this.state.duration}
+              cssAnimation={this.state.cssAnimation}
               animating={this.state.animating}
             />
             <div className="links-container">
@@ -180,7 +179,7 @@ export default class App extends React.Component {
                   `notFound` path will be used. This will only work if the `path` component
                   has variables.
                 */
-                pathMask={({ red, green, blue }) => {
+                pathResolve={({ red, green, blue }) => {
                   // Validate that they're all numbers
                   if (isNaN(red) || isNaN(green) || isNaN(blue)) {
                     // Return anything else not matching the `path` pattern to trigger a 404
@@ -190,7 +189,7 @@ export default class App extends React.Component {
                   red = Math.min(Math.abs(parseInt(red)), 255);
                   green = Math.min(Math.abs(parseInt(green)), 255);
                   blue = Math.min(Math.abs(parseInt(blue)), 255);
-                  // Return the validated url
+                  // Return the resolved url
                   return `/color/${red}/${green}/${blue}`;
                 }}
                 component={Color}
@@ -235,7 +234,7 @@ export default class App extends React.Component {
             Smoothr was written by{' '}
             <a href="https://github.com/n8jadams">Nate Adams</a>.{' '}
             <a href="https://github.com/n8jadams/smoothr">
-              View The Source Code
+              Github Repo
             </a>
             .
           </footer>

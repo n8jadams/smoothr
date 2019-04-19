@@ -72,6 +72,10 @@ input {
   border-radius: 5px;
   border: 1px solid #ef476f;
 }
+input:disabled,
+select:disabled {
+  opacity: 0.5;
+}
 /* Links */
 .links-container {
   background-color: #ef476f;
@@ -180,4 +184,34 @@ footer * {
 }
 .overlay {
   height: 100%;
+}
+
+/* CSS animations (Duration must match up with animationOpts prop of <Rout>) */
+.slideUpIn {
+  animation: 0.75s slideUpIn;
+}
+@keyframes slideUpIn {
+  from { transform: translate3d(0, 100%, 0) }
+  to { transform: translate3d(0, 0, 0) }
+}
+.slideUpOut {
+  animation: 0.75s slideUpOut;
+}
+@keyframes slideUpOut {
+  from { transform: translate3d(0, 0, 0) }
+  to { transform: translate3d(0, -100%, 0) }
+}
+.slideUpReverseIn {
+  animation: 0.75s slideUpReverseIn;
+}
+@keyframes slideUpReverseIn {
+  from { transform: translate3d(0, -100%, 0) }
+  to { transform: translate3d(0, 0, 0) }
+}
+.slideUpReverseOut {
+  animation: 0.75s slideUpReverseOut;
+}
+@keyframes slideUpReverseOut {
+  from { transform: translate3d(0, 0, 0) }
+  to { transform: translate3d(0, 100%, 0) }
 }

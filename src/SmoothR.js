@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { SmoothRContext } from './SmoothRContext';
-import { parseCurrentUrl } from './utils/parseCurrentUrl';
 import { extractPathVars } from './utils/extractPathVars';
 import { getLSArray, pushLSArray } from './utils/lsArray';
 import { LS_KEYS } from './consts/LS_KEYS';
@@ -9,32 +8,42 @@ class Smoothr extends Component {
   constructor(props) {
     super(props);
 
-    // Use window.location.href to handle hash and set current url
-    let originPath = '';
+    // Set some class properties
+    this.initialPageload = true;
+    this.defaultNotFoundPath = true;
+    this.originPath = '';
     if (props.originPath && props.originPath !== '/') {
-      originPath = props.originPath;
+      this.originPath = props.originPath;
     }
-    const currentUrl = parseCurrentUrl({
-      fullUrl: window.location.href,
-      originPath
-    });
+    this.routeVars = {};
+
+    // DOM Animation class properties
+    this.domInAnimation = {};
+    this.domInAnimation.cancel = () => {};
+    this.domOutAnimation = {};
+    this.domOutAnimation.cancel = () => {};
 
     this.state = {
-      initialPageload: true,
-      originPath,
-      currentUrl,
+      currentUrl: this.deriveCurrentRoute(),
       newUrl: null,
       pageNavigated: 1,
       backNavigation: false,
       routeConsts: [],
-      defaultNotFoundPath: true,
       notFoundPath: '/notfound',
       visitedUrls: getLSArray(LS_KEYS.VISITED_URL_LIST),
       visitedRoutes: getLSArray(LS_KEYS.VISITED_ROUTE_LIST)
     };
-
-    this.routeVars = {};
   }
+
+  deriveCurrentRoute = () => {
+    let suffix = window.location.href.split('/');
+    suffix = `/${suffix.slice(3, suffix.length).join('/')}`;
+    let preppedUrl = suffix.split(this.originPath).join('') || '/';
+    if (`${preppedUrl}#` === this.originPath) {
+      preppedUrl = '/';
+    }
+    return preppedUrl;
+  };
 
   setRouteConsts = (routeConsts, notFoundPath) => {
     function merge(a, b, prop) {
@@ -47,8 +56,8 @@ class Smoothr extends Component {
     // Add any routes to the routeConsts that aren't already there
     this.setState(state => {
       let newStateObj = { routeConsts: merge(state.routeConsts, routeConsts) };
-      if (state.defaultNotFoundPath) {
-        newStateObj.defaultNotFoundPath = false;
+      if (this.defaultNotFoundPath) {
+        this.defaultNotFoundPath = false;
         newStateObj.notFoundPath = notFoundPath;
       }
       return newStateObj;
@@ -77,33 +86,6 @@ class Smoothr extends Component {
     window.removeEventListener('hashchange', this.handleHashChange);
   }
 
-  componentDidUpdate() {
-    // Debounce in order to get refs!
-    setTimeout(() => {
-      // Handle the route animations for each route group
-      Object.keys(this.routeVars).forEach(routeHash => {
-        let routeGroup = this.routeVars[routeHash];
-        if (this.state.newUrl) {
-          let inAnimation = routeGroup.animationIn;
-          let outAnimation = routeGroup.animationOut;
-          let opts = routeGroup.animationOpts;
-          // Determine if we use reverse animations
-          if (this.state.backNavigation) {
-            inAnimation = routeGroup.reverseAnimationIn || inAnimation;
-            outAnimation = routeGroup.reverseAnimationOut || outAnimation;
-            opts = routeGroup.reverseAnimationOpts || opts;
-          }
-          if (typeof inAnimation !== 'string' && routeGroup.newPageRef) {
-            routeGroup.newPageRef.animate(inAnimation, opts);
-          }
-          if (typeof outAnimation !== 'string' && routeGroup.currentPageRef) {
-            routeGroup.currentPageRef.animate(outAnimation, opts);
-          }
-        }
-      });
-    }, 1);
-  }
-
   handlePopState = e => {
     if (e.state) {
       const backNavigation = e.state.pageNavigated < this.state.pageNavigated;
@@ -111,19 +93,12 @@ class Smoothr extends Component {
     }
   };
 
-  handleHashChange = e => {
-    const incomingUrl = parseCurrentUrl({
-      fullUrl: window.location.href,
-      originPath: this.state.originPath
-    });
+  handleHashChange = () => {
+    const incomingUrl = this.deriveCurrentRoute();
     this.handleRouteChange(incomingUrl);
   };
 
-  handleRouteChange = (
-    incomingUrl,
-    backNavigation = false,
-    linkNavigation = false
-  ) => {
+  resolveRoutes = incomingUrl => {
     // Remove query string and hash from new url
     let cleanNewUrl = incomingUrl.replace(/\?(.*)|\#(.*)/, '');
     let queryStringHash = incomingUrl.split(cleanNewUrl).join('');
@@ -138,16 +113,16 @@ class Smoothr extends Component {
       }
       // If it matches the new URL
       if (RegExp(routeObj.pathRegexp).test(cleanNewUrl)) {
-        // Handle pathMasking
-        if (routeObj.pathMask) {
+        // Handle pathResolving
+        if (routeObj.pathResolve) {
           const keyValObj = extractPathVars(routeObj.path, cleanNewUrl);
-          const maskedUrl = routeObj.pathMask(keyValObj);
+          const resolvedUrl = routeObj.pathResolve(keyValObj);
           if (
-            typeof maskedUrl === 'string' &&
-            RegExp(routeObj.pathRegexp).test(maskedUrl)
+            typeof resolvedUrl === 'string' &&
+            RegExp(routeObj.pathRegexp).test(resolvedUrl)
           ) {
-            cleanNewUrl = maskedUrl;
-            incomingUrl = `${maskedUrl}${queryStringHash}`;
+            cleanNewUrl = resolvedUrl;
+            incomingUrl = `${resolvedUrl}${queryStringHash}`;
             incomingRoute = routeObj.path;
             newUrlIsFound = true;
           }
@@ -169,6 +144,26 @@ class Smoothr extends Component {
       ? this.state.notFoundPath
       : this.state.currentUrl;
 
+    return {
+      incomingRoute,
+      incomingUrl,
+      outgoingRoute,
+      outgoingUrl
+    };
+  };
+
+  handleRouteChange = (
+    newRoute,
+    backNavigation = false,
+    linkNavigation = false
+  ) => {
+    let {
+      outgoingUrl,
+      incomingUrl,
+      outgoingRoute,
+      incomingRoute
+    } = this.resolveRoutes(newRoute);
+
     // All incoming routes and URLs are set
     let newStateObj = {};
     if (linkNavigation) {
@@ -179,7 +174,7 @@ class Smoothr extends Component {
           pageNavigated: this.state.pageNavigated + 1
         },
         '',
-        `${this.state.originPath}${incomingUrl}`
+        `${this.originPath}${incomingUrl}`
       );
       // Push visited links to state and local storage
       if (this.state.visitedUrls.indexOf(outgoingUrl) === -1) {
@@ -195,98 +190,160 @@ class Smoothr extends Component {
       }
     }
     // Handle initial pageload without animating
-    if (this.state.initialPageload) {
+    if (this.initialPageload) {
+      this.initialPageload = false;
       window.history.replaceState(
         { url: incomingUrl, pageNavigated: this.state.pageNavigated },
         '',
-        `${this.state.originPath}${incomingUrl}`
+        `${this.originPath}${incomingUrl}`
       );
-      this.props.onAnimationStart({
-        initialPageload: true
-      });
       this.setState({
-        initialPageload: false,
-        currentUrl: cleanNewUrl
+        ...newStateObj,
+        currentUrl: incomingUrl,
       });
     } else {
-      // Configure the animation (or lack thereof)
-      let duration = 0;
+      // Kick off the animation
       new Promise(resolve => {
-        duration = this.props.configAnimationSetDuration({
-          outgoingUrl,
-          incomingUrl,
-          outgoingRoute,
-          incomingRoute,
-          backNavigation
-        });
-        duration = !newUrlIsFound ? 0 : duration;
+        if(this.props.beforeAnimation) {
+          this.props.beforeAnimation({
+            outgoingUrl,
+            incomingUrl,
+            outgoingRoute,
+            incomingRoute,
+            backNavigation
+          });
+        }
         resolve();
       }).then(() => {
         this.props.onAnimationStart({
           initialPageload: false
         });
-        if (!duration || duration < 1) {
-          this.handleAfterTransition(cleanNewUrl);
-        } else {
-          // Execute the animation
-          let interrupted = false;
-          this.setState(
-            state => {
-              if (state.newUrl) {
-                interrupted = true;
-                clearTimeout(this.animationTimeout);
-                return {
-                  newUrl: null,
-                  currentUrl: cleanNewUrl,
-                  pageNavigated: backNavigation
-                    ? this.state.pageNavigated - 1
-                    : this.state.pageNavigated + 1,
-                  backNavigation: false
-                };
-              }
-              return {
-                newUrl: cleanNewUrl,
-                pageNavigated: backNavigation
-                  ? this.state.pageNavigated - 1
-                  : this.state.pageNavigated + 1,
-                backNavigation
-              };
-            },
-            () => {
-              if (interrupted) {
-                this.props.onAnimationEnd();
-                return;
-              }
-              this.animationTimeout = setTimeout(() => {
-                this.handleAfterTransition(cleanNewUrl);
-              }, Math.max(0, duration - 2));
-            }
-          );
-        }
+        // Execute the animation in state
+        let interrupted = false;
+        this.setState(state => {
+          const pageNavigated = backNavigation
+            ? state.pageNavigated - 1
+            : state.pageNavigated + 1;
+          if (state.newUrl) {
+            // Interupted animation. End animation.
+            interrupted = true;
+            clearTimeout(this.animationTimeout);
+            this.domInAnimation.cancel();
+            this.domOutAnimation.cancel();
+            return {
+              ...newStateObj,
+              newUrl: null,
+              currentUrl: incomingUrl,
+              pageNavigated,
+              backNavigation: false
+            };
+          }
+          // Start animation
+          return {
+            ...newStateObj,
+            newUrl: incomingUrl,
+            pageNavigated,
+            backNavigation
+          };
+        }, () => {
+          if(interrupted) {
+            this.domInAnimation.cancel = () => {};
+            this.domOutAnimation.cancel = () => {};
+            this.props.onAnimationEnd();
+          }
+        });
       });
     }
   };
 
-  handleAfterTransition = cleanNewUrl => {
-    this.setState(
-      () => {
-        clearTimeout(this.animationTimeout);
-        return {
-          currentUrl: cleanNewUrl,
-          newUrl: null,
-          backNavigation: false
-        };
-      },
-      () => {
-        this.props.onAnimationEnd();
-      }
-    );
-  };
+  componentDidUpdate() {
+    const endRouteChange = () => {
+      this.setState(
+        state => {
+          if(state.newUrl) {
+            return {
+              newUrl: null,
+              currentUrl: state.newUrl,
+              pageNavigated: state.backNavigation
+                ? state.pageNavigated - 1
+                : state.pageNavigated + 1,
+              backNavigation: false
+            };
+          }
+          return null;
+        },
+        () => {
+          this.domInAnimation.cancel = () => {};
+          this.domOutAnimation.cancel = () => {};
+          this.props.onAnimationEnd();
+        }
+      );
+    };
+
+    // If an animation just started, execute animation in the DOM
+    if (this.state.newUrl) {
+      // Clear out any timeout that may have been interrupted
+      clearTimeout(this.animationTimeout);
+      this.domInAnimation.cancel();
+      this.domOutAnimation.cancel();
+
+      // Execute the route animations for each route group
+      Object.keys(this.routeVars).forEach(routeHash => {
+        let routeGroup = this.routeVars[routeHash];
+
+        let inAnimation = routeGroup.animationIn;
+        let outAnimation = routeGroup.animationOut;
+        let opts = routeGroup.animationOpts;
+        let duration = 0;
+        if(opts) {
+          let tempDur = 0;
+          if(typeof opts === 'number') {
+            tempDur = opts;
+          } else if(typeof opts === 'object' && opts.duration) {
+            tempDur = opts.duration;
+          }
+          duration = Math.max(0, tempDur);
+        }
+        // Determine if we use reverse animations
+        if (this.state.backNavigation) {
+          inAnimation = routeGroup.reverseAnimationIn || inAnimation;
+          outAnimation = routeGroup.reverseAnimationOut || outAnimation;
+          opts = routeGroup.reverseAnimationOpts || opts;
+        }
+        if (typeof inAnimation !== 'string' && routeGroup.newPageRef) {
+          this.domInAnimation = routeGroup.newPageRef.animate(
+            inAnimation,
+            opts
+          );
+          this.domInAnimation.onfinish = endRouteChange;
+          this.domInAnimation.oncancel = endRouteChange;
+          this.domInAnimation.play();
+        }
+        if (typeof outAnimation !== 'string' && routeGroup.currentPageRef) {
+          this.domOutAnimation = routeGroup.currentPageRef.animate(
+            outAnimation,
+            opts
+          );
+          this.domOutAnimation.onfinish = endRouteChange;
+          this.domOutAnimation.oncancel = endRouteChange;
+          this.domOutAnimation.play();
+        }
+        // If both of the animations are classNames, use a timeout
+        if (
+          typeof inAnimation === 'string' &&
+          typeof outAnimation === 'string'
+        ) {
+          this.animationTimeout = setTimeout(endRouteChange, duration + 1);
+        }
+      });
+    }
+  }
 
   render() {
     return (
       <SmoothRContext.Provider
         value={{
+          originPath: this.originPath,
           state: this.state,
           handleRouteChange: this.handleRouteChange,
           setRouteConsts: this.setRouteConsts,

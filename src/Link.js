@@ -14,12 +14,13 @@ function Link(props) {
           children,
           ...otherProps
         } = props;
+        const { originPath } = context;
         let {
           newUrl,
           currentUrl,
           visitedRoutes,
           visitedUrls,
-          originPath
+          routeConsts
         } = context.state;
         
         let isCurrentRoute = newUrl

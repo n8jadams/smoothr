@@ -51,19 +51,16 @@ class SmoothRoutesRender extends Component {
         notFoundPath = c.props.path;
         return;
       } else if (c.props.notFound) {
-        (console.error || console.log)(
-          'The `path` on the <Route /> with the `notFound` attribute cannot have any URL variables.'
-        );
-        return;
+        throw 'Smoothr Error: The `path` on the <Route /> with the `notFound` attribute cannot have any URL variables.';
       }
       const path = c.props.path.replace(/\?(.*)|\#(.*)/, '');
       let routeObj = {
         path: path,
         pathRegexp: pathToRegexp(path)
       };
-      // Optionally add the pathMask prop
-      if (c.props.path.indexOf(':') !== -1 && c.props.pathMask) {
-        routeObj.pathMask = c.props.pathMask;
+      // Optionally add the pathResolve prop
+      if (c.props.path.indexOf(':') !== -1 && c.props.pathResolve) {
+        routeObj.pathResolve = c.props.pathResolve;
       }
       routeConsts.push(routeObj);
     });
@@ -108,6 +105,8 @@ class SmoothRoutesRender extends Component {
         route.props.reverseAnimationOut || reverseAnimationOut;
       const usedReverseAnimationOpts =
         route.props.reverseAnimationOpts || reverseAnimationOpts;
+      
+      // For each applicable <Route>, do the following...
       if (newUrl && RegExp(pathAsRegexp).test(newUrl)) {
         assignUserSetProps(route.props, newPageProps);
         assignPathProps(pathAsRegexp, pathKeys, newUrl, newPageProps);
@@ -143,9 +142,21 @@ class SmoothRoutesRender extends Component {
           'reverseAnimationOpts',
           usedReverseAnimationOpts
         );
-        if (typeof route.props.animationIn === 'string') {
-          newPageClass += ' ' + usedAnimationIn;
-          currentPageClass += ' ' + usedAnimationOut;
+        if (
+          typeof route.props.animationIn === 'string' ||
+          typeof this.props.animationIn === 'string'
+        ) {
+          newPageClass = !context.state.backNavigation
+            ? usedAnimationIn
+            : usedReverseAnimationIn;
+        }
+        if (
+          typeof route.props.animationOut === 'string' ||
+          typeof this.props.animationOut === 'string'
+        ) {
+          currentPageClass = !context.state.backNavigation
+            ? usedAnimationOut
+            : usedReverseAnimationOut;
         }
       }
       if (RegExp(pathAsRegexp).test(currentUrl)) {
