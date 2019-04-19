@@ -10,6 +10,7 @@ class Smoothr extends Component {
 
     // Set some class properties
     this.initialPageload = true;
+    this.defaultNotFoundPath = true;
     this.originPath = '';
     if (props.originPath && props.originPath !== '/') {
       this.originPath = props.originPath;
@@ -23,19 +24,18 @@ class Smoothr extends Component {
     this.domOutAnimation.cancel = () => {};
 
     this.state = {
-      currentUrl: this.prepWindowHrefForRouting(),
+      currentUrl: this.deriveCurrentRoute(),
       newUrl: null,
       pageNavigated: 1,
       backNavigation: false,
       routeConsts: [],
-      defaultNotFoundPath: true,
       notFoundPath: '/notfound',
       visitedUrls: getLSArray(LS_KEYS.VISITED_URL_LIST),
       visitedRoutes: getLSArray(LS_KEYS.VISITED_ROUTE_LIST)
     };
   }
 
-  prepWindowHrefForRouting = () => {
+  deriveCurrentRoute = () => {
     let suffix = window.location.href.split('/');
     suffix = `/${suffix.slice(3, suffix.length).join('/')}`;
     let preppedUrl = suffix.split(this.originPath).join('') || '/';
@@ -56,8 +56,8 @@ class Smoothr extends Component {
     // Add any routes to the routeConsts that aren't already there
     this.setState(state => {
       let newStateObj = { routeConsts: merge(state.routeConsts, routeConsts) };
-      if (state.defaultNotFoundPath) {
-        newStateObj.defaultNotFoundPath = false;
+      if (this.defaultNotFoundPath) {
+        this.defaultNotFoundPath = false;
         newStateObj.notFoundPath = notFoundPath;
       }
       return newStateObj;
@@ -94,7 +94,7 @@ class Smoothr extends Component {
   };
 
   handleHashChange = () => {
-    const incomingUrl = this.prepWindowHrefForRouting();
+    const incomingUrl = this.deriveCurrentRoute();
     this.handleRouteChange(incomingUrl);
   };
 
@@ -292,10 +292,16 @@ class Smoothr extends Component {
         let inAnimation = routeGroup.animationIn;
         let outAnimation = routeGroup.animationOut;
         let opts = routeGroup.animationOpts;
-        let duration = Math.max(
-          0,
-          typeof opts === 'number' ? opts : opts.duration
-        );
+        let duration = 0;
+        if(opts) {
+          let tempDur = 0;
+          if(typeof opts === 'number') {
+            tempDur = opts;
+          } else if(typeof opts === 'object' && opts.duration) {
+            tempDur = opts.duration;
+          }
+          duration = Math.max(0, tempDur);
+        }
         // Determine if we use reverse animations
         if (this.state.backNavigation) {
           inAnimation = routeGroup.reverseAnimationIn || inAnimation;

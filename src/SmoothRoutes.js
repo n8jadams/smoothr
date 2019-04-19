@@ -51,10 +51,7 @@ class SmoothRoutesRender extends Component {
         notFoundPath = c.props.path;
         return;
       } else if (c.props.notFound) {
-        (console.error || console.log)(
-          'The `path` on the <Route /> with the `notFound` attribute cannot have any URL variables.'
-        );
-        return;
+        throw 'Smoothr Error: The `path` on the <Route /> with the `notFound` attribute cannot have any URL variables.';
       }
       const path = c.props.path.replace(/\?(.*)|\#(.*)/, '');
       let routeObj = {
