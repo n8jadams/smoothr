@@ -14,7 +14,7 @@ A custom React router that leverages the Web Animations API and CSS animations.
 - [x] Minimal Polyfilling necessary (Just `Object.assign()`, `Promise` and possibly [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate), for IE11 and newer)
 
 ## Backstory
-In my experience of using animations with React Router and other Single Page App routing solutions, the work to add animation transitions on changing routes was a lot more complicated than just regular routing. I also was inspired by the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) and decided to create my own flavor of a Router, that treats animations as first class citizens.
+In my experience of using animations with React Router and other Single Page App routing solutions, the work to add animation transitions on changing routes was a lot more complicated than just regular routing. I also was inspired by the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) and decided to create my own flavor of a Router, one that treats animations as first class citizens.
 
 Anyway, thanks for checking this library out. If you end up using Smoothr in production, let me know and I'll add a link here in the README. 
 
@@ -46,10 +46,7 @@ import { Smoothr, SmoothRoutes, Route, Link } from 'smoothr';
 const Page = props => <section>{props.message}</section>;
 
 const App = () => (
-  <Smoothr
-    // Required prop! Return animation duration in milliseconds
-    beforeAnimation={() => 750}
-  >
+  <Smoothr>
     <div>
       {/* Link is our wrapper around anchors for Smoothr navigation  */}
       <Link href="/">Home</Link>
@@ -90,8 +87,6 @@ const App = () => (
     </div>
   </Smoothr>
 );
-
-ReactDOM.render(<App />, document.getElementById('root'));
 ```
 
 For a more complete example, check out [the demo](https://smoothr.netlify.com) and its [source code](https://github.com/n8jadams/smoothr/blob/master/example/src/index.js) If you want to play around with this example, see the setup instructions in the [Contributing section](#contributing).
@@ -101,10 +96,10 @@ For a more complete example, check out [the demo](https://smoothr.netlify.com) a
 ### `<Smoothr>`
 
 #### Usage: 
-The `<Smoothr>` component just needs to be used up the tree of any `<Link>`s or `<SmoothRoutes>`. I just recommend having it at the top level of your Single Page App. `<Smoothr>` props are the top-level configuration for all routing.
+The `<Smoothr>` component just needs to be used up the tree of any `<Link>`s or `<SmoothRoutes>`. I recommend having it at the top level of your Single Page App. `<Smoothr>` props are the top-level configuration for all routing.
 
 #### Available props: (* indicates a required prop)
-* `beforeAnimation`* - _(function)_ - This method is the entry point into knowing what's going on with the Smoothr routing. It is used in a `Promise` which will resolve before starting the animation to ensure the completion of any asynchonous state changes before animating. Use it to change local state in order to conditionally set the upcoming animation. Example:
+* `beforeAnimation` - _(function)_ - This method is the entry point into knowing what's going on with the Smoothr routing. It is used in a `Promise` which will resolve before starting the animation to ensure the completion of any asynchonous state changes before animating. Use it to change local state in order to conditionally set the upcoming animation. Example:
 
 ```javascript
 beforeAnimation = ({
@@ -123,23 +118,23 @@ beforeAnimation = ({
 ```
 * `onAnimationStart` - _(function)_ - This function will run right before the animation begins. Use it to imperitively kick off transition animations. If you want to kick off an animation based on incoming or outgoing routes, use `beforeAnimation` to set some state, and then use that state in this method.
 
-* `onAnimationEnd` - _(function)_ - This takes place after the animation is finished. Reset your animations if they're saved in state, or do something else. There are no arguments passed. Note that this will not run on an interrupted animation (if the user navigates too quickly for the animation to complete.)
+* `onAnimationEnd` - _(function)_ - This takes place after the animation is finished. Tell your app that it's done animating, reset some configuration saved in state, or do something else. There are no arguments passed. Note that this function will not execute if the animation is interrupted. (Generally when the user navigates too quickly for the animation to complete.)
 
-* `originPath` - _(string)_ - The path after the domain to the origin of this single page app, including the beginning backslash, but not the trailing backslash. This will be set once and cannot be updated. All of the `<Link>` `href` properties will be relative to that origin path. For hash routing, set this to `"/#"` or something else ending with a hash (`#`), and that's it! Example: `"/smoothr-app"`, and `<Link href="/page1" />` will link to `"/smoothr-app/page1"`. This defaults to an empty string, which signifies the document root.
+* `originPath` - _(string)_ - The path after the domain to the origin of this single page app. This includes the beginning backslash, but not the trailing backslash. This will be set once and cannot be updated. All of the `<Link>` `href` properties will be relative to that origin path. For hash routing, set this to `"/#"` or something else ending with a hash (`#`), and that's it! Example: `"/smoothr-app"`, and `<Link href="/page1" />` will link to `"/smoothr-app/page1"`. This defaults to an empty string, which signifies the document root.
 
 ### `<SmoothRoutes>`
 
 #### Usage:
-Imagine `<SmoothRoutes>` as a regular DOM element that changes when the url changes. Its children MUST be `<Route>` components. You can use as many of these on the page as you want. Often you'll want to wrap each `<SmoothRoutes>` component in a wrapper DOM element with some CSS rules to set its size.
+Imagine `<SmoothRoutes>` as a regular DOM element that changes when the url changes. Its children MUST be `<Route>` components. You can use as many of these on the page as you want. Often you'll want to wrap each `<SmoothRoutes>` component in a wrapper DOM element with some CSS rules or a MutationObserver to set its size.
 
 #### Available props:
-Each of these props are identical to their `<Route>` counterparts. They will be applied to all routes if set at the `<SmoothRoutes>` level, but if a `<Route>` has an animation prop, the logic will favor the props set on the `<Route>` at transition.
+Each of these props are identical to their `<Route>` counterparts. They will be applied to all routes if set at the `<SmoothRoutes>` level, but if a `<Route>` has an animation prop, the logic will favor the props set on the `<Route>` at transition time.
 * `animationIn` - _(array of objects/string indicating class name)_
 * `animationOut` - _(array of objects/string indicating class name)_
-* `animationOpts` - _(object with keys for `duration` and `easing`)_
+* `animationOpts` - _(object with keys for `duration` and `easing`, or int for `duration`)_
 * `reverseAnimationIn` - _(array of objects/string indicating class name)_
 * `reverseAnimationOut` - _(array of objects/string indicating class name)_
-* `reverseAnimationOpts` - _(object with keys for `duration` and `easing`)_
+* `reverseAnimationOpts` - _(object with keys for `duration` and `easing`, or int for `duration`)_
 
 ### `<Route>`
 
@@ -148,7 +143,7 @@ Most of the actual animation configuration takes place on the `<Route>` level. A
 
 #### Available props: (* indicates a required prop)
 * `component`* - _(React Component)_ - The component that you want to be rendered when the URL matches a given path.
-* `path`* - _(string)_ - When the url matches the `path` of your `<Route>`, it will render to the page. Variabled routes are supported, and can be indicated with a `:`. The value of that variable will be passed down as a prop by the name in the path to the rendered `component`. Example of using `path` with variables:
+* `path`* - _(string)_ - When the url matches the `path` of your `<Route>`, it will render to the page. Variabled routes are supported, and can be indicated with a colon (`:`). The value of that variable will be passed down as a prop by the name in the path to the rendered `component`. Example of using `path` with variables:
 
 ```jsx
 <Route path="/users/:id" component={UsersPage} />
@@ -171,7 +166,7 @@ Most of the actual animation configuration takes place on the `<Route>` level. A
     red = Math.min(Math.abs(parseInt(red)), 255);
     green = Math.min(Math.abs(parseInt(green)), 255);
     blue = Math.min(Math.abs(parseInt(blue)), 255);
-    // Return the valid url
+    // Return the resolved url
     return `/color/${red}/${green}/${blue}`;
   }}
   // ...
@@ -182,7 +177,7 @@ Most of the actual animation configuration takes place on the `<Route>` level. A
 * `animationOpts` - _(object with keys for `duration` and `easing`, or int for `duration`)_ - This corresponds to the second argument of the [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate) method. These options are applied to both the incoming and outgoing `<Route>`s during transition. If using a CSS class transition, then this expects an integer for the duration of the animation in milliseconds.
 * `reverseAnimationIn` - _(array of objects/string indicating class name)_ - Same as the `animationIn` but happens when the user nagivates back with the "back" button in their browser.
 * `reverseAnimationOut` - _(array of objects/string indicating class name)_ - Reverse equivalent of the `animationOut` prop.
-* `reverseAnimationOpts` - _(object with keys for `duration` and `easing`)_ - Reverse equivalent of the `animationOpts` prop.
+* `reverseAnimationOpts` - _(object with keys for `duration` and `easing`, or int for `duration`)_ - Reverse equivalent of the `animationOpts` prop.
 * `notFound` - _(No type, just add the prop)_ - This designates a `path` and `component` to show when the URL doesn't match any of the other paths.
 * Any other props that are set will be passed down to the rendered `component`.
 
@@ -219,10 +214,11 @@ a[data-smoothr-visited-link="true"] {
 - [x] Handle visited links and current links better
 - [x] Remove glitchiness around interrupted animations
 - [x] Add hash routing
+- [x] General cleanup
 - [ ] Add prop checks with `PropTypes`
 - [ ] Test app in Preact/add Preact support
 - [ ] Remove need to polyfill `Object.assign` and possibly `Promise`
-- [ ] General cleanup and optimizations
+- [ ] Optimization
 - [ ] Add more animations to the demo page
 
 ## Contributing

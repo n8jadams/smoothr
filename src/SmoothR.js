@@ -204,13 +204,15 @@ class Smoothr extends Component {
     } else {
       // Kick off the animation
       new Promise(resolve => {
-        this.props.beforeAnimation({
-          outgoingUrl,
-          incomingUrl,
-          outgoingRoute,
-          incomingRoute,
-          backNavigation
-        });
+        if(this.props.beforeAnimation) {
+          this.props.beforeAnimation({
+            outgoingUrl,
+            incomingUrl,
+            outgoingRoute,
+            incomingRoute,
+            backNavigation
+          });
+        }
         resolve();
       }).then(() => {
         this.props.onAnimationStart({
@@ -331,7 +333,7 @@ class Smoothr extends Component {
           typeof inAnimation === 'string' &&
           typeof outAnimation === 'string'
         ) {
-          this.animationTimeout = setTimeout(endRouteChange, duration);
+          this.animationTimeout = setTimeout(endRouteChange, duration + 1);
         }
       });
     }

@@ -105,6 +105,8 @@ class SmoothRoutesRender extends Component {
         route.props.reverseAnimationOut || reverseAnimationOut;
       const usedReverseAnimationOpts =
         route.props.reverseAnimationOpts || reverseAnimationOpts;
+      
+      // For each applicable <Route>, do the following...
       if (newUrl && RegExp(pathAsRegexp).test(newUrl)) {
         assignUserSetProps(route.props, newPageProps);
         assignPathProps(pathAsRegexp, pathKeys, newUrl, newPageProps);
@@ -140,9 +142,21 @@ class SmoothRoutesRender extends Component {
           'reverseAnimationOpts',
           usedReverseAnimationOpts
         );
-        if (typeof route.props.animationIn === 'string') {
-          newPageClass = !context.state.backNavigation ? usedAnimationIn : usedReverseAnimationIn;
-          currentPageClass = !context.state.backNavigation ? usedAnimationOut : usedReverseAnimationOut;
+        if (
+          typeof route.props.animationIn === 'string' ||
+          typeof this.props.animationIn === 'string'
+        ) {
+          newPageClass = !context.state.backNavigation
+            ? usedAnimationIn
+            : usedReverseAnimationIn;
+        }
+        if (
+          typeof route.props.animationOut === 'string' ||
+          typeof this.props.animationOut === 'string'
+        ) {
+          currentPageClass = !context.state.backNavigation
+            ? usedAnimationOut
+            : usedReverseAnimationOut;
         }
       }
       if (RegExp(pathAsRegexp).test(currentUrl)) {

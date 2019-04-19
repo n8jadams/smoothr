@@ -58,7 +58,11 @@ function Options(props) {
         <input 
           type="checkbox"
           checked={props.showOverlay}
-          onChange={e => props.setState({showOverlay: !props.showOverlay})}
+          onChange={() => {
+            if(!props.animating) {
+              props.setState({showOverlay: !props.showOverlay})}
+            }
+          }
           readOnly={props.animating}
         />
       </label>

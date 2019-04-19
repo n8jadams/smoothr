@@ -78,7 +78,7 @@ export default class App extends React.Component {
           Example: "/smoothr-app", and <Link href="/page1" /> will link to "/smoothr-app/page1".
           This defaults to an empty string, which signifies the document root.
         */
-        originPath=""
+        originPath="/"
         beforeAnimation={this.beforeAnimation}
         onAnimationStart={this.onAnimationStart}
         onAnimationEnd={this.onAnimationEnd}
@@ -189,7 +189,7 @@ export default class App extends React.Component {
                   red = Math.min(Math.abs(parseInt(red)), 255);
                   green = Math.min(Math.abs(parseInt(green)), 255);
                   blue = Math.min(Math.abs(parseInt(blue)), 255);
-                  // Return the validated url
+                  // Return the resolved url
                   return `/color/${red}/${green}/${blue}`;
                 }}
                 component={Color}
@@ -234,7 +234,7 @@ export default class App extends React.Component {
             Smoothr was written by{' '}
             <a href="https://github.com/n8jadams">Nate Adams</a>.{' '}
             <a href="https://github.com/n8jadams/smoothr">
-              View The Source Code
+              Github Repo
             </a>
             .
           </footer>
