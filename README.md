@@ -31,7 +31,13 @@ May your single page routing animations be smoother, with Smoothr... (pardon the
 ### Installation
 
 ```
-$ npm install smoothr
+$ npm install --save smoothr
+```
+
+or
+
+```
+$ yarn add smoothr
 ```
 
 ## Minimal Example Usage
