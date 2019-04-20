@@ -37,19 +37,12 @@
     <script crossorigin="anonymous" src="https://polyfill.io/v3/polyfill.min.js?features=default%2CPromise%2CArray.prototype.find"></script>
   </head>
   <body>
-    <!-- Github pages redirect script -->
     <script type="text/javascript">
       (function(){
-        // Handle redirect
-        var redirect = sessionStorage.redirect;
-        delete sessionStorage.redirect;
-        if (redirect && redirect != location.href) {
-          history.replaceState(null, null, redirect);
-        }
         // Conditionally add the web animation API polyfill
         if(!document.body.animate) {
           var polyfillScript = document.createElement('script');
-          polyfillScript.setAttribute('src', '%PUBLIC_URL%/assets/waapi-polyfill.min.js');
+          polyfillScript.setAttribute('src', 'https://rawgit.com/web-animations/web-animations-js/master/web-animations.min.js');
           document.head.appendChild(polyfillScript);
         }
       })();

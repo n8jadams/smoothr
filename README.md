@@ -26,7 +26,7 @@ May your single page routing animations be smoother, with Smoothr... (pardon the
 
 * React 16.3.0 or higher
 * Support for `Object.assign()` and `Promise` in Javascript
-* Any necessary polyfills for the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) (I prefer [this one](https://github.com/wnda/web-animations-api-shiv), but you may need [this one](https://github.com/web-animations/web-animations-js).)
+* Any necessary polyfills for the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) [This one gets the job done well.](https://github.com/web-animations/web-animations-js)
 
 ### Installation
 
