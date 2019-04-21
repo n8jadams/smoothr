@@ -178,7 +178,8 @@ class SmoothRoutesRender extends Component {
     const containerStyles = {
       height: '100%',
       width: '100%',
-      position: 'absolute'
+      position: 'absolute',
+      'animation-fill-mode': 'forwards'
     };
 
     return newUrl ? (

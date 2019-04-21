@@ -263,6 +263,7 @@ class Smoothr extends Component {
     const endRouteChange = () => {
       this.setState(
         state => {
+          // This prevents redundant setting of state
           if (state.newUrl) {
             return {
               newUrl: null,
@@ -312,6 +313,7 @@ class Smoothr extends Component {
           throw 'Smoothr Error: animationOpts/reverseAnimationOps prop must be an object or integer';
         }
 
+        let cssAnimationUsed = false;
         // IN ANIMATIONS
         if(routeGroup.newPageRef) {
           if (typeof inAnimation !== 'string') {
@@ -325,7 +327,7 @@ class Smoothr extends Component {
             this.domInAnimation.play();
           } else {
             // In animation className
-
+            cssAnimationUsed = true;
           }
         }
         // OUT ANIMATIONS
@@ -341,8 +343,12 @@ class Smoothr extends Component {
             this.domOutAnimation.play();
           } else {
             // Out animation className
-
+            cssAnimationUsed = true;
           }
+        }
+
+        if(cssAnimationUsed) {
+          setTimeout(endRouteChange, opts.duration);
         }
       });
     }
