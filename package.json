@@ -34,9 +34,9 @@
     "preact"
   ],
   "peerDependencies": {
+    "path-to-regexp": "^3.0.0",
     "prop-types": ">=15",
-    "react": ">=16.3.0",
-    "path-to-regexp": "^3.0.0"
+    "react": ">=16.3.0"
   },
   "devDependencies": {
     "all-contributors-cli": "^4.11.1",
@@ -66,5 +66,6 @@
   "bugs": {
     "url": "https://github.com/n8jadams/smoothr/issues"
   },
-  "homepage": "https://github.com/n8jadams/smoothr#readme"
+  "homepage": "https://github.com/n8jadams/smoothr#readme",
+  "dependencies": {}
 }

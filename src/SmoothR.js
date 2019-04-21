@@ -296,12 +296,12 @@ class Smoothr extends Component {
 
         let inAnimation = routeGroup.animationIn;
         let outAnimation = routeGroup.animationOut;
-        let opts = Math.floor(routeGroup.animationOpts);
+        let opts = routeGroup.animationOpts;
         // Determine if we use reverse animations
         if (this.state.backNavigation) {
           inAnimation = routeGroup.reverseAnimationIn || inAnimation;
           outAnimation = routeGroup.reverseAnimationOut || outAnimation;
-          opts = Math.floor(routeGroup.reverseAnimationOpts) || opts;
+          opts = routeGroup.reverseAnimationOpts || opts;
         }
         // Force the opts to be an object
         if (typeof opts === 'number') {
@@ -341,7 +341,7 @@ class Smoothr extends Component {
             this.domOutAnimation.play();
           } else {
             // Out animation className
-            
+
           }
         }
       });
