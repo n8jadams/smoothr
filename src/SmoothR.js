@@ -313,9 +313,19 @@ class Smoothr extends Component {
           throw 'Smoothr Error: animationOpts/reverseAnimationOps prop must be an object or integer';
         }
 
+        // Error if using Infinity
+        if (opts.iterations && opts.iterations === Infinity) {
+          throw 'Smoothr Error: Cannot use `iterations: Infinity` as animation options';
+        }
+
+        const duration =
+          (opts.delay || 0) +
+          opts.duration * (opts.iterations || 1) +
+          (opts.endDelay || 0);
+          
         let cssAnimationUsed = false;
         // IN ANIMATIONS
-        if(routeGroup.newPageRef) {
+        if (routeGroup.newPageRef) {
           if (typeof inAnimation !== 'string') {
             // In animation object
             this.domInAnimation = routeGroup.newPageRef.animate(
@@ -331,7 +341,7 @@ class Smoothr extends Component {
           }
         }
         // OUT ANIMATIONS
-        if(routeGroup.currentPageRef) {
+        if (routeGroup.currentPageRef) {
           // Out animation object
           if (typeof outAnimation !== 'string' && routeGroup.currentPageRef) {
             this.domOutAnimation = routeGroup.currentPageRef.animate(
@@ -347,8 +357,8 @@ class Smoothr extends Component {
           }
         }
 
-        if(cssAnimationUsed) {
-          setTimeout(endRouteChange, opts.duration);
+        if (cssAnimationUsed) {
+          this.animationTimeout = setTimeout(endRouteChange, duration);
         }
       });
     }

@@ -234,7 +234,7 @@ export default class App extends React.Component {
             Smoothr was written by{' '}
             <a href="https://github.com/n8jadams">Nate Adams</a>.{' '}
             <a href="https://github.com/n8jadams/smoothr">
-              Github Repo
+              View in Github.
             </a>
             .
           </footer>

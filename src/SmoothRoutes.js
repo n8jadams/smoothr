@@ -179,7 +179,7 @@ class SmoothRoutesRender extends Component {
       height: '100%',
       width: '100%',
       position: 'absolute',
-      'animation-fill-mode': 'forwards'
+      animationFillMode: 'forwards'
     };
 
     return newUrl ? (
