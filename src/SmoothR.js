@@ -306,8 +306,10 @@ class Smoothr extends Component {
           opts = { duration: opts };
         } else if (typeof opts === 'object') {
           opts.fill = 'forwards';
-        } else {
+        } else if(opts) {
           throw 'Smoothr Error: animationOpts/reverseAnimationOps prop must be an object or integer';
+        } else {
+          opts = { duration: 0 };
         }
 
         // Error if using Infinity
