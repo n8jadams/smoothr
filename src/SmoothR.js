@@ -268,9 +268,6 @@ class Smoothr extends Component {
             return {
               newUrl: null,
               currentUrl: state.newUrl,
-              pageNavigated: state.backNavigation
-                ? state.pageNavigated - 1
-                : state.pageNavigated + 1,
               backNavigation: false
             };
           }
