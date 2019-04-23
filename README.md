@@ -26,12 +26,18 @@ May your single page routing animations be smoother, with Smoothr... (pardon the
 
 * React 16.3.0 or higher
 * Support for `Object.assign()` and `Promise` in Javascript
-* Any necessary polyfills for the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) (I prefer [this one](https://github.com/wnda/web-animations-api-shiv), but you may need [this one](https://github.com/web-animations/web-animations-js).)
+* Any necessary polyfills for the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) [This one gets the job done well.](https://github.com/web-animations/web-animations-js)
 
 ### Installation
 
 ```
-$ npm install smoothr
+$ npm install --save smoothr
+```
+
+or
+
+```
+$ yarn add smoothr
 ```
 
 ## Minimal Example Usage
@@ -129,12 +135,12 @@ Imagine `<SmoothRoutes>` as a regular DOM element that changes when the url chan
 
 #### Available props:
 Each of these props are identical to their `<Route>` counterparts. They will be applied to all routes if set at the `<SmoothRoutes>` level, but if a `<Route>` has an animation prop, the logic will favor the props set on the `<Route>` at transition time.
-* `animationIn` - _(array of objects/string indicating class name)_
-* `animationOut` - _(array of objects/string indicating class name)_
-* `animationOpts` - _(object with keys for `duration` and `easing`, or int for `duration`)_
-* `reverseAnimationIn` - _(array of objects/string indicating class name)_
-* `reverseAnimationOut` - _(array of objects/string indicating class name)_
-* `reverseAnimationOpts` - _(object with keys for `duration` and `easing`, or int for `duration`)_
+* `animationIn` - _([Element.animate() `keyframes` argument, or string indicating `className`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_
+* `animationOut` - _([Element.animate() `keyframes` argument, or string indicating `className`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_
+* `animationOpts` - _([Element.animate() `options` argument](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_
+* `reverseAnimationIn` - _([Element.animate() `keyframes` argument, or string indicating `className`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_
+* `reverseAnimationOut` - _([Element.animate() `keyframes` argument, or string indicating `className`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_
+* `reverseAnimationOpts` - _([Element.animate() `options` argument](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_
 
 ### `<Route>`
 
@@ -172,12 +178,19 @@ Most of the actual animation configuration takes place on the `<Route>` level. A
   // ...
 />
 ```
-* `animationIn` - _(array of objects/string indicating class name)_ - The value of this prop corresponds to the first argument of the [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate) method, or a css class name, which will be applied to the `<Route>` DOM element during the duration of the animation. If this isn't passed, then no animation will occur, but be aware that the incoming `<Route>` won't show up until the duration ends, as set in the `beforeAnimation` prop of the top level `<Smoothr>` component.
-* `animationOut` - _(array of objects/string indicating class name)_ - Similiar to `animationIn`, but is applied to the outgoing `<Route>`
-* `animationOpts` - _(object with keys for `duration` and `easing`, or int for `duration`)_ - This corresponds to the second argument of the [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate) method. These options are applied to both the incoming and outgoing `<Route>`s during transition. If using a CSS class transition, then this expects an integer for the duration of the animation in milliseconds.
-* `reverseAnimationIn` - _(array of objects/string indicating class name)_ - Same as the `animationIn` but happens when the user nagivates back with the "back" button in their browser.
-* `reverseAnimationOut` - _(array of objects/string indicating class name)_ - Reverse equivalent of the `animationOut` prop.
-* `reverseAnimationOpts` - _(object with keys for `duration` and `easing`, or int for `duration`)_ - Reverse equivalent of the `animationOpts` prop.
+* `animationIn` - _([Element.animate() `keyframes` argument, or string indicating `className`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_ - The value of this prop corresponds to the first argument of the [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate) method, or a css class name, which will be applied to the `<Route>` DOM element during the duration of the animation. If this isn't passed, then no animation will occur, but be aware that the incoming `<Route>` won't show up until the duration ends, as set in the `beforeAnimation` prop of the top level `<Smoothr>` component.
+* `animationOut` - _([Element.animate() `keyframes` argument, or string indicating `className`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_ - Similiar to `animationIn`, but is applied to the outgoing `<Route>`
+* `animationOpts` - _([Element.animate() `options` argument](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_ - This corresponds to the second argument of the [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate) method. These options are applied to both the incoming and outgoing `<Route>`s during transition. If using a CSS class transition, then this expects an integer for the duration of the animation in milliseconds.
+
+*NOTE: There are a couple of nuances to how Smoothr uses the `options` argument of `Element.animate()`.*
+
+1. `fill` is always set to `forwards`
+2. `iterations` cannot be set to `Infinity`.
+
+
+* `reverseAnimationIn` - _([Element.animate() `keyframes` argument, or string indicating `className`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_ - Same as the `animationIn` but happens when the user nagivates back with the "back" button in their browser.
+* `reverseAnimationOut` - _([Element.animate() `keyframes` argument, or string indicating `className`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_ - Reverse equivalent of the `animationOut` prop.
+* `reverseAnimationOpts` - _([Element.animate() `options` argument](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_ - Reverse equivalent of the `animationOpts` prop.
 * `notFound` - _(No type, just add the prop)_ - This designates a `path` and `component` to show when the URL doesn't match any of the other paths.
 * Any other props that are set will be passed down to the rendered `component`.
 

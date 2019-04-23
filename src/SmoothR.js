@@ -199,12 +199,12 @@ class Smoothr extends Component {
       );
       this.setState({
         ...newStateObj,
-        currentUrl: incomingUrl,
+        currentUrl: incomingUrl
       });
     } else {
       // Kick off the animation
       new Promise(resolve => {
-        if(this.props.beforeAnimation) {
+        if (this.props.beforeAnimation) {
           this.props.beforeAnimation({
             outgoingUrl,
             incomingUrl,
@@ -220,38 +220,41 @@ class Smoothr extends Component {
         });
         // Execute the animation in state
         let interrupted = false;
-        this.setState(state => {
-          const pageNavigated = backNavigation
-            ? state.pageNavigated - 1
-            : state.pageNavigated + 1;
-          if (state.newUrl) {
-            // Interupted animation. End animation.
-            interrupted = true;
-            clearTimeout(this.animationTimeout);
-            this.domInAnimation.cancel();
-            this.domOutAnimation.cancel();
+        this.setState(
+          state => {
+            const pageNavigated = backNavigation
+              ? state.pageNavigated - 1
+              : state.pageNavigated + 1;
+            if (state.newUrl) {
+              // Interupted animation. End animation.
+              interrupted = true;
+              clearTimeout(this.animationTimeout);
+              this.domInAnimation.cancel();
+              this.domOutAnimation.cancel();
+              return {
+                ...newStateObj,
+                newUrl: null,
+                currentUrl: incomingUrl,
+                pageNavigated,
+                backNavigation: false
+              };
+            }
+            // Start animation
             return {
               ...newStateObj,
-              newUrl: null,
-              currentUrl: incomingUrl,
+              newUrl: incomingUrl,
               pageNavigated,
-              backNavigation: false
+              backNavigation
             };
+          },
+          () => {
+            if (interrupted) {
+              this.domInAnimation.cancel = () => {};
+              this.domOutAnimation.cancel = () => {};
+              this.props.onAnimationEnd();
+            }
           }
-          // Start animation
-          return {
-            ...newStateObj,
-            newUrl: incomingUrl,
-            pageNavigated,
-            backNavigation
-          };
-        }, () => {
-          if(interrupted) {
-            this.domInAnimation.cancel = () => {};
-            this.domOutAnimation.cancel = () => {};
-            this.props.onAnimationEnd();
-          }
-        });
+        );
       });
     }
   };
@@ -260,13 +263,11 @@ class Smoothr extends Component {
     const endRouteChange = () => {
       this.setState(
         state => {
-          if(state.newUrl) {
+          // This prevents redundant setting of state
+          if (state.newUrl) {
             return {
               newUrl: null,
               currentUrl: state.newUrl,
-              pageNavigated: state.backNavigation
-                ? state.pageNavigated - 1
-                : state.pageNavigated + 1,
               backNavigation: false
             };
           }
@@ -294,46 +295,67 @@ class Smoothr extends Component {
         let inAnimation = routeGroup.animationIn;
         let outAnimation = routeGroup.animationOut;
         let opts = routeGroup.animationOpts;
-        let duration = 0;
-        if(opts) {
-          let tempDur = 0;
-          if(typeof opts === 'number') {
-            tempDur = opts;
-          } else if(typeof opts === 'object' && opts.duration) {
-            tempDur = opts.duration;
-          }
-          duration = Math.max(0, tempDur);
-        }
         // Determine if we use reverse animations
         if (this.state.backNavigation) {
           inAnimation = routeGroup.reverseAnimationIn || inAnimation;
           outAnimation = routeGroup.reverseAnimationOut || outAnimation;
           opts = routeGroup.reverseAnimationOpts || opts;
         }
-        if (typeof inAnimation !== 'string' && routeGroup.newPageRef) {
-          this.domInAnimation = routeGroup.newPageRef.animate(
-            inAnimation,
-            opts
-          );
-          this.domInAnimation.onfinish = endRouteChange;
-          this.domInAnimation.oncancel = endRouteChange;
-          this.domInAnimation.play();
+        // Force the opts to be an object
+        if (typeof opts === 'number') {
+          opts = { duration: opts };
+        } else if (typeof opts === 'object') {
+          opts.fill = 'forwards';
+        } else {
+          throw 'Smoothr Error: animationOpts/reverseAnimationOps prop must be an object or integer';
         }
-        if (typeof outAnimation !== 'string' && routeGroup.currentPageRef) {
-          this.domOutAnimation = routeGroup.currentPageRef.animate(
-            outAnimation,
-            opts
-          );
-          this.domOutAnimation.onfinish = endRouteChange;
-          this.domOutAnimation.oncancel = endRouteChange;
-          this.domOutAnimation.play();
+
+        // Error if using Infinity
+        if (opts.iterations && opts.iterations === Infinity) {
+          throw 'Smoothr Error: Cannot use `iterations: Infinity` as animation options';
         }
-        // If both of the animations are classNames, use a timeout
-        if (
-          typeof inAnimation === 'string' &&
-          typeof outAnimation === 'string'
-        ) {
-          this.animationTimeout = setTimeout(endRouteChange, duration + 1);
+
+        const duration =
+          (opts.delay || 0) +
+          opts.duration * (opts.iterations || 1) +
+          (opts.endDelay || 0);
+          
+        let cssAnimationUsed = false;
+        // IN ANIMATIONS
+        if (routeGroup.newPageRef) {
+          if (typeof inAnimation !== 'string') {
+            // In animation object
+            this.domInAnimation = routeGroup.newPageRef.animate(
+              inAnimation,
+              opts
+            );
+            this.domInAnimation.onfinish = endRouteChange;
+            this.domInAnimation.oncancel = endRouteChange;
+            this.domInAnimation.play();
+          } else {
+            // In animation className
+            cssAnimationUsed = true;
+          }
+        }
+        // OUT ANIMATIONS
+        if (routeGroup.currentPageRef) {
+          // Out animation object
+          if (typeof outAnimation !== 'string' && routeGroup.currentPageRef) {
+            this.domOutAnimation = routeGroup.currentPageRef.animate(
+              outAnimation,
+              opts
+            );
+            this.domOutAnimation.onfinish = endRouteChange;
+            this.domOutAnimation.oncancel = endRouteChange;
+            this.domOutAnimation.play();
+          } else {
+            // Out animation className
+            cssAnimationUsed = true;
+          }
+        }
+
+        if (cssAnimationUsed) {
+          this.animationTimeout = setTimeout(endRouteChange, duration);
         }
       });
     }
