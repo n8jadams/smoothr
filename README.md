@@ -95,7 +95,7 @@ const App = () => (
 );
 ```
 
-For a more complete example, check out [the demo](https://smoothr.netlify.com) and its [source code](https://github.com/n8jadams/smoothr/blob/master/example/src/index.js) If you want to play around with this example, see the setup instructions in the [Contributing section](#contributing).
+For a more complete example, check out [the demo](https://smoothr.netlify.com) and its [source code](https://github.com/n8jadams/smoothr/blob/master/example/src/index.js). If you want to play around with this example, see the setup instructions in the [Contributing section](#contributing).
 
 ## API Documentation
 
@@ -124,7 +124,7 @@ beforeAnimation = ({
 ```
 * `onAnimationStart` - _(function)_ - This function will run right before the animation begins. Use it to imperitively kick off transition animations. If you want to kick off an animation based on incoming or outgoing routes, use `beforeAnimation` to set some state, and then use that state in this method.
 
-* `onAnimationEnd` - _(function)_ - This takes place after the animation is finished. Tell your app that it's done animating, reset some configuration saved in state, or do something else. There are no arguments passed. Note that this function will not execute if the animation is interrupted. (Generally when the user navigates too quickly for the animation to complete.)
+* `onAnimationEnd` - _(function)_ - This takes place after the animation is finished. Tell your app that it's done animating, reset some configuration saved in state, or do something else. There are no arguments passed.
 
 * `originPath` - _(string)_ - The path after the domain to the origin of this single page app. This includes the beginning backslash, but not the trailing backslash. This will be set once and cannot be updated. All of the `<Link>` `href` properties will be relative to that origin path. For hash routing, set this to `"/#"` or something else ending with a hash (`#`), and that's it! Example: `"/smoothr-app"`, and `<Link href="/page1" />` will link to `"/smoothr-app/page1"`. This defaults to an empty string, which signifies the document root.
 
@@ -178,20 +178,19 @@ Most of the actual animation configuration takes place on the `<Route>` level. A
   // ...
 />
 ```
-* `animationIn` - _([Element.animate() `keyframes` argument, or string indicating `className`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_ - The value of this prop corresponds to the first argument of the [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate) method, or a css class name, which will be applied to the `<Route>` DOM element during the duration of the animation. If this isn't passed, then no animation will occur, but be aware that the incoming `<Route>` won't show up until the duration ends, as set in the `beforeAnimation` prop of the top level `<Smoothr>` component.
+* `animationIn` - _([Element.animate() `keyframes` argument, or string indicating `className`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_ - The value of this prop corresponds to the first argument of the [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate) method, or a css class name, which will be applied to the `<Route>` DOM element during the duration of the animation. If this isn't passed, then no animation will occur, but be aware that the incoming `<Route>` won't show up until the duration ends, as set in the `animationOpts` prop of either the `<SmoothRoutes>` or `<Route>` component.
 * `animationOut` - _([Element.animate() `keyframes` argument, or string indicating `className`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_ - Similiar to `animationIn`, but is applied to the outgoing `<Route>`
-* `animationOpts` - _([Element.animate() `options` argument](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_ - This corresponds to the second argument of the [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate) method. These options are applied to both the incoming and outgoing `<Route>`s during transition. If using a CSS class transition, then this expects an integer for the duration of the animation in milliseconds.
+* `animationOpts` - _([Element.animate() `options` argument](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_ - This corresponds to the second argument of the [`Element.animate()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate) method. These options are applied to both the incoming and outgoing `<Route>`s during transition. If using a CSS class transition, then any other options passed to an object besides `duration` will be ignored. If this prop is not set, the animation duration will default to 0.
 
 *NOTE: There are a couple of nuances to how Smoothr uses the `options` argument of `Element.animate()`.*
 
 1. `fill` is always set to `forwards`
 2. `iterations` cannot be set to `Infinity`.
 
-
 * `reverseAnimationIn` - _([Element.animate() `keyframes` argument, or string indicating `className`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_ - Same as the `animationIn` but happens when the user nagivates back with the "back" button in their browser.
 * `reverseAnimationOut` - _([Element.animate() `keyframes` argument, or string indicating `className`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_ - Reverse equivalent of the `animationOut` prop.
 * `reverseAnimationOpts` - _([Element.animate() `options` argument](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#Parameters))_ - Reverse equivalent of the `animationOpts` prop.
-* `notFound` - _(No type, just add the prop)_ - This designates a `path` and `component` to show when the URL doesn't match any of the other paths.
+* `notFound` - _(No type, just set the prop)_ - This designates a `path` and `component` to show when the URL doesn't match any of the other paths. If you have multiple `<SmoothRoutes>` sections, the `<Route>`s flagged with this prop must have matching `path`s. (Only one "not found" url path can exist.)
 * Any other props that are set will be passed down to the rendered `component`.
 
 ### `<Link>`
@@ -213,21 +212,19 @@ a[data-smoothr-visited-link="true"] {
 #### Available props: (* indicates a required prop)
 * `href`* - _(string)_ - Same as anchor tag
 * `onClick` - _(function)_ - This is self-explanatory
-* `fuzzyCurrent` - _(No type, just add the prop)_ - If is prop is set, the `data-smoothr-current-link` property will be added to the link if the route matches the current *variabled* route. By default, only exact url matches will have the `data-smoothr-current-link` property added.
-* `fuzzyVisited` - _(No type, just add the props)_ - Similiar to the `fuzzyCurrent` prop, but related to visited links. If the user visits a Route with a matching variable pattern, the `data-smoothr-visited-link` property will be added.
+* `fuzzyCurrent` - _(No type, just set the prop)_ - If is prop is set, the `data-smoothr-current-link` property will be added to the link if the route matches the current *variabled* route. By default, only exact url matches will have the `data-smoothr-current-link` property added.
+* `fuzzyVisited` - _(No type, just set the prop)_ - Similiar to the `fuzzyCurrent` prop, but related to visited links. If the user visits a Route with a matching variable pattern, the `data-smoothr-visited-link` property will be added.
 * Any other props that are set will be passed down to the rendered anchor tag.
-
-## Known bugs/oddities
-* When using SVGs as the `src` attribute of an `<img>` tag, on desktop Safari and mobile browsers the image will "blink". This can be avoided by using rasterized image types or raw `<svg>` tags in your routed components. See [Issue #8](https://github.com/n8jadams/smoothr/issues/8).
 
 ## To do list before version 1.0.0:
 - [x] Release initial build to NPM
 - [x] Add ability to validate and mask URL variables on navigation
-- [x] Test on Chrome, Firefox, Safari, and IE11 (if it works in IE11 it should work on Edge... right? 😂)
+- [x] Test on Chrome, Firefox, Safari, Edge and IE11.
 - [x] Handle visited links and current links better
 - [x] Remove glitchiness around interrupted animations
 - [x] Add hash routing
 - [x] General cleanup
+- [ ] Test on Edge and IE11.
 - [ ] Add prop checks with `PropTypes`
 - [ ] Test app in Preact/add Preact support
 - [ ] Remove need to polyfill `Object.assign` and possibly `Promise`
