@@ -1,6 +1,6 @@
 {
   "name": "smoothr",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Smoothr: Smooth Router - A custom React router that leverages the Web Animations API and CSS animations.",
   "keywords": [
     "react",
@@ -67,5 +67,7 @@
     "url": "https://github.com/n8jadams/smoothr/issues"
   },
   "homepage": "https://github.com/n8jadams/smoothr#readme",
-  "dependencies": {}
+  "dependencies": {
+    "path-to-regexp": "^3.0.0"
+  }
 }

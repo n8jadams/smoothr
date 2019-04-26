@@ -215,9 +215,11 @@ class Smoothr extends Component {
         }
         resolve();
       }).then(() => {
-        this.props.onAnimationStart({
-          initialPageload: false
-        });
+        if(this.props.onAnimationStart) {
+          this.props.onAnimationStart({
+            initialPageload: false
+          });
+        }
         // Execute the animation in state
         let interrupted = false;
         this.setState(
@@ -251,7 +253,9 @@ class Smoothr extends Component {
             if (interrupted) {
               this.domInAnimation.cancel = () => {};
               this.domOutAnimation.cancel = () => {};
-              this.props.onAnimationEnd();
+              if(this.props.onAnimationEnd) {
+                this.props.onAnimationEnd();
+              }
             }
           }
         );
@@ -276,7 +280,9 @@ class Smoothr extends Component {
         () => {
           this.domInAnimation.cancel = () => {};
           this.domOutAnimation.cancel = () => {};
-          this.props.onAnimationEnd();
+          if(this.props.onAnimationEnd) {
+            this.props.onAnimationEnd();
+          }
         }
       );
     };
