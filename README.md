@@ -2,7 +2,7 @@
 ## Smooth Router
 A custom React router that leverages the Web Animations API and CSS animations. 
 
-[Check out the demo!](https://smoothr.netlify.com/)
+[Check out the demo!](https://smoothr.netlify.app/)
 
 ![Smoothr Logo](assets/big-logo.png)
 
